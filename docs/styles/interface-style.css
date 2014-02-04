@@ -1,0 +1,395 @@
+@font-face {
+    font-family: 'TeXGyreHeros';
+    src: url('fonts/texgyreheros-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TeXGyreHeros';
+    src: url('fonts/texgyreheros-italic-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'TeXGyreHeros';
+    src: url('fonts/texgyreheros-bold-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'TeXGyreHeros';
+    src: url('fonts/texgyreheros-bolditalic-webfont.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'InconsolataMedium';
+    src: url('fonts/Inconsolata-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/*
+ * Using css3 border-box model instead of the content-box traditional model, 
+ * because the latter has many inconsistencies
+ */
+body {
+	background-color: #f9f9f9;
+	font-family: 'TeXGyreHeros', sans-serif;
+}
+
+.success-msg,
+.warning-msg,
+.error-msg,
+.content,
+.ui-datepicker,
+.ui-dialog {
+	border: 1px solid;
+	border-radius: 0.3rem;
+}
+
+.success-msg {
+	background-color: #D7FCD7;
+	box-shadow: 0 0 0.4rem #bbb;
+	border-color: #b7c8b7;
+}
+
+.warning-msg {
+	background-color: #ffccaa;
+	color: #ff5a08;
+	box-shadow: 0 0 0.4rem #bbb;
+	border-color: #ffb380;
+}
+
+.error-msg {
+	background-color: #ffd9db;
+	color: red;
+	box-shadow: 0 0 0.4rem #bbb;
+	border-color: #ffc8c9;
+}
+
+.msg-icon {
+	font-size: 1.5rem;
+}
+
+.content, .ui-datepicker, .ui-dialog {
+	border-color: #bbb;
+	box-shadow: 0 0 1rem #bbb;
+}
+
+.content {
+	background-color: #fff;
+}
+
+.content-header {
+	border-top-left-radius: 0.3rem;
+	border-top-right-radius: 0.3rem;
+	box-shadow: 0 0.1rem 0.1rem #aaa;
+	background-color: #6f7c91;
+	color: #fff;
+	font-size: 2em;
+	font-weight: bold;
+}
+
+.sidebar {
+	background-color: #ececec;
+	box-shadow: -0.1rem 0.1rem 0.1rem #aaa inset;
+	border-bottom-left-radius: 0.3rem;
+	text-align: center;
+}
+
+.sidebar a {
+	text-decoration: none;
+	color: #000;
+}
+
+.sidebar .active {
+	box-shadow: 0 0 0.4rem #bbb;
+	border: 1px solid #ffb380;
+	border-radius: 0.3rem;
+	background-color: #ffccaa;
+}
+
+.sidebar .inactive {
+	border-radius: 0.3rem;
+	cursor: pointer;
+
+	transition-property: background-color;
+	transition-duration: 0.5s;
+	-moz-transition-property: background-color;
+	-moz-transition-duration: 0.5s;
+	-webkit-transition-property: background-color;
+	-webkit-transition-duration: 0.5s;
+	-o-transition-property: background-color;
+	-o-transition-duration: 0.5s;
+}
+
+.sidebar .inactive:hover {
+	background-color: #ffccaa;
+}
+
+/* Elements */
+
+.box, .field-error-msg {
+	border-style: solid;
+	border-width: 1px;
+	border-color: #ccc;
+	box-shadow: 0 0 0.2rem #ddd;
+}
+
+.box > .close,
+.field-error-msg > .close,
+.success-msg > .close,
+.warning-msg > .close,
+.error-msg > .close,
+ui-icon-closethick {
+	color: black;
+	cursor: pointer;
+	font-weight: bold;
+	font-size: 0.7em;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table.table th {
+	background-color: #b7c8b7;
+}
+
+table.table tr td {
+	transition-property: background-color;
+	transition-duration: 0.5s;
+	-moz-transition-property: background-color;
+	-moz-transition-duration: 0.5s;
+	-webkit-transition-property: background-color;
+	-webkit-transition-duration: 0.5s;
+	-o-transition-property: background-color;
+	-o-transition-duration: 0.5s;
+}
+
+table.table tr:hover td {
+	background-color: #ddd;
+}
+
+table.table.zebra tr:nth-of-type(even) {
+	background-color: #eee;
+}
+
+table.table.with-inner-border td {
+	border: 1px solid #ccc;
+}
+
+header {
+	font-size: 1.5rem;
+	color: #377e1c;
+}
+
+section.box {
+	background-color: #f9f9f9;
+}
+
+section.toggle > header {
+	transition-property: background-color;
+	transition-duration: 0.5s;
+	-moz-transition-property: background-color;
+	-moz-transition-duration: 0.5s;
+	-webkit-transition-property: background-color;
+	-webkit-transition-duration: 0.5s;
+	-o-transition-property: background-color;
+	-o-transition-duration: 0.5s;
+
+	border-radius: 0.3rem;
+	cursor: pointer;
+}
+
+section.toggle > header:hover {
+	background-color: #e3f4d7
+}
+
+.hover {
+	transition-property: background-color;
+	transition-duration: 0.5s;
+	-moz-transition-property: background-color;
+	-moz-transition-duration: 0.5s;
+	-webkit-transition-property: background-color;
+	-webkit-transition-duration: 0.5s;
+	-o-transition-property: background-color;
+	-o-transition-duration: 0.5s;
+
+	border-radius: 0.3rem;
+}
+
+.hover:hover {
+	background-color: #e3f4d7
+}
+
+section.hover-toggle {
+	transition-property: background-color;
+	transition-duration: 0.5s;
+	-moz-transition-property: background-color;
+	-moz-transition-duration: 0.5s;
+	-webkit-transition-property: background-color;
+	-webkit-transition-duration: 0.5s;
+	-o-transition-property: background-color;
+	-o-transition-duration: 0.5s;
+
+	border-radius: 0.3rem;
+	cursor: pointer;
+}
+
+.hover-toggle:hover {
+	background-color: #e3f4d7;
+}
+
+/* Icons */
+button > .icon-ok {
+	color: green;
+}
+
+button > .icon-remove {
+	color: red;
+}
+
+/* Forms */
+
+textarea, input, button, select {
+	background-color: #eee;
+	border-radius: 0.15rem;
+	border: 1px solid #ccc;
+	margin-bottom: 0.5em;
+
+
+	transition-property: background-color, border-color, box-shadow;
+	transition-duration: 0.3s;
+	-moz-transition-property: background-color, border-color, box-shadow;
+	-moz-transition-duration: 0.3s;
+	-webkit-transition-property: background-color, border-color, box-shadow;
+	-webkit-transition-duration: 0.3s;
+	-o-transition-property: background-color, border-color, box-shadow;
+	-o-transition-duration: 0.3s;
+}
+
+textarea {
+	font-family: 'InconsolataMedium'
+}
+
+button,
+input[type="button"],
+input[type="checkbox"],
+input[type="submit"],
+input[type="reset"] {
+	box-shadow: 0 0.05em 0.1em #bbb;
+	border: 1px solid #aaa;
+	font-family: 'TeXGyreHeros';
+}
+
+button:hover,
+input[type="button"]:hover,
+input[type="checkbox"]:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+.ui-button:hover {
+	background-color: #d07d45;
+	border-color: #b36b3b;
+	color: white;
+}
+
+textarea:focus, input:focus, button:focus {
+	border-color: #ffb380;
+	outline: 0;
+	box-shadow: 0 0 0.2rem #ffb380;
+	background-color: #fff0e6;
+}
+
+.right {
+	text-align: right;
+}
+
+textarea:read-only,
+input:read-only {
+}
+/* 
+ * This class is necessary as a workaround for Firefox, since it seems to not 
+ * recognise read-only attribute in css selectors. When it its fixed, it'll be 
+ * better to only use :read-only selector.
+ */
+.read-only, .read-only:focus {
+	background-color: white;
+	border: none;
+	border-radius: 0px;
+	box-shadow: 0 0px 0px rgba(0, 0, 0, 0);
+	font-family: 'TeXGyreHeros';
+	font-size: medium;
+	outline: 0;
+	color: black;
+}
+
+.label-for-readonly {
+	color: #777;
+}
+
+
+fieldset {
+	border: 1px dashed #aaa;
+}
+
+legend {
+	font-size: 1.1rem;
+	color: #377e1c;
+}
+
+/* Errors */
+
+textarea.error, input.error {
+	box-shadow: 0 0 0.3rem #ff3232;
+	border-color: #f00000;
+}
+
+.field-error-msg {
+	background-color: #ffd9db;
+	color: red;
+	box-shadow: 0 0 0.2rem #ffd2d2;
+	border-color: #ffc8c9;
+}
+
+.invisible {
+	opacity: 0;
+
+	transition: opacity 0.3s linear;
+	-moz-transition: opacity 0.3s linear;
+	-webkit-transition: opacity 0.3s linear;
+	-o-transition: opacity 0.3s linear;
+}
+
+/* JQuery UI */
+.ui-datepicker .ui-state-default {
+	background-color: #f8f8f8;
+	border: 1px solid #e5e5e5;
+}
+
+.ui-state-default {
+	transition: background-color 0.5s linear;
+	-moz-transition: background-color 0.5s linear;
+	-webkit-transition: background-color 0.5s linear;
+	-o-transition: background-color 0.5s linear;
+}
+
+.ui-state-default.ui-state-active {
+	border-color: #999;
+	background-color: #ddd;
+}
+
+.ui-state-default.ui-state-highlight {
+	border-color: #ff9955;
+}
+
+.ui-state-default.ui-state-hover {
+	background-color: #d07d45;
+	border-color: #b36b3b;
+	color: white;
+}
