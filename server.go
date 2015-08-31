@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"errors"
-	"github.com/miekg/dns"
 	"html/template"
 	"io/ioutil"
 	"log"
@@ -16,6 +15,8 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/miekg/dns"
 )
 
 var (
@@ -34,7 +35,7 @@ type Nameserver struct {
 type DS struct {
 	KeyTag     int
 	Algorithm  int
-	DigestType int
+	DigestType uint8
 	Digest     string
 }
 
@@ -279,12 +280,12 @@ func updateRootZone(domain *Domain) bool {
 
 	if len(domain.DSs[0].Digest) > 0 {
 		cmdFile.WriteString("update add " + domain.Name + " 172800 DS " + strconv.Itoa(domain.DSs[0].KeyTag) + " " +
-			strconv.Itoa(domain.DSs[0].Algorithm) + " " + strconv.Itoa(domain.DSs[0].DigestType) + " " + domain.DSs[0].Digest + "\n")
+			strconv.Itoa(domain.DSs[0].Algorithm) + " " + strconv.FormatUint(uint64(domain.DSs[0].DigestType), 10) + " " + domain.DSs[0].Digest + "\n")
 	}
 
 	if len(domain.DSs[1].Digest) > 0 {
 		cmdFile.WriteString("update add " + domain.Name + " 172800 DS " + strconv.Itoa(domain.DSs[1].KeyTag) + " " +
-			strconv.Itoa(domain.DSs[1].Algorithm) + " " + strconv.Itoa(domain.DSs[1].DigestType) + " " + domain.DSs[1].Digest + "\n")
+			strconv.Itoa(domain.DSs[1].Algorithm) + " " + strconv.FormatUint(uint64(domain.DSs[1].DigestType), 10) + " " + domain.DSs[1].Digest + "\n")
 	}
 
 	cmdFile.WriteString("send\n")
@@ -394,8 +395,8 @@ func loadDS(r *http.Request, labelPrefix string) (ds *DS, errs map[string][]stri
 		errs[labelPrefix+"-algorithm"] = append(errs[labelPrefix+"-algorithm"], "Must be a number!")
 	}
 
-	if digestType, err := strconv.Atoi(r.FormValue(labelPrefix + "-digest-type")); err == nil {
-		ds.DigestType = digestType
+	if digestType, err := strconv.ParseUint(r.FormValue(labelPrefix+"-digest-type"), 10, 8); err == nil {
+		ds.DigestType = uint8(digestType)
 	} else {
 		errs[labelPrefix+"-digest-type"] = append(errs[labelPrefix+"-digest-type"], "Must be a number!")
 	}
@@ -466,7 +467,7 @@ func retrieveDomains() map[string]*Domain {
 				ds := new(DS)
 				ds.KeyTag = int(dsRR.KeyTag)
 				ds.Algorithm = int(dsRR.Algorithm)
-				ds.DigestType = int(dsRR.DigestType)
+				ds.DigestType = dsRR.DigestType
 				ds.Digest = strings.ToUpper(dsRR.Digest)
 
 				domain := domains[rr.Header().Name]

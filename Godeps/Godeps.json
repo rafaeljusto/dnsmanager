@@ -1,0 +1,13 @@
+{
+	"ImportPath": "github.com/rafaeljusto/dnsmanager",
+	"GoVersion": "go1.5",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/miekg/dns",
+			"Rev": "1897a2a983df410a57ff88f8bfe647164b49e373"
+		}
+	]
+}
