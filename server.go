@@ -13,7 +13,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"syscall"
 	"time"
 
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/miekg/dns"
@@ -21,8 +20,8 @@ import (
 
 var (
 	domainTemplate *template.Template
-	isDomain       *regexp.Regexp
-	isIP           *regexp.Regexp
+	isDomain       = regexp.MustCompile("([a-zA-Z0-9]\\.)*([a-zA-Z0-9](\\.)?)")
+	isIP           = regexp.MustCompile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}")
 
 	errNotFound = errors.New("No records for domain")
 )
@@ -81,9 +80,6 @@ func init() {
 		"getDigest": func(index int) string {
 			return "ds" + strconv.Itoa(index) + "-digest"
 		},
-		"equal": func(number1, number2 int) bool {
-			return number1 == number2
-		},
 		"print": func(domain *Domain) string {
 			nsCount := 0
 			for _, nameserver := range domain.Nameservers {
@@ -106,18 +102,6 @@ func init() {
 			return number
 		},
 	}).ParseFiles("templates/domain.tmpl.html"))
-
-	var err error
-
-	isDomain, err = regexp.Compile("([a-zA-Z0-9]\\.)*([a-zA-Z0-9](\\.)?)")
-	if err != nil {
-		log.Fatalf("Error in FQDN regexp: %s", err.Error())
-	}
-
-	isIP, err = regexp.Compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}")
-	if err != nil {
-		log.Fatalf("Error in IP regexp: %s", err.Error())
-	}
 }
 
 func CreateDomain(w http.ResponseWriter, r *http.Request) {
@@ -652,14 +636,6 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func changePrivileges() error {
-	if err := syscall.Setuid(1000); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func redirectLogOutput(logFile string) {
 	f, err := os.OpenFile(logFile, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
@@ -682,10 +658,6 @@ func main() {
 
 	ln, err := net.Listen("tcp", ipAndPort)
 	if err != nil {
-		log.Fatal(err)
-	}
-
-	if err := changePrivileges(); err != nil {
 		log.Fatal(err)
 	}
 

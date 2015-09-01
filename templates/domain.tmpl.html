@@ -219,12 +219,12 @@ $ dig @recursive.rafael.net.br example. dnskey +dnssec +m
 								{{$algorithm := getAlgorithm $index}}
 								<label for="ds{{$index}}-algorithm">Algorithm</label>
 								<select name="ds{{$index}}-algorithm" id="ds{{$index}}-algorithm" {{if hasErrors $algorithm $errors}}class="error"{{end}}>
-									<option value="3" {{if equal $ds.Algorithm 3}}selected="selected"{{end}}>DSA/SHA-1</option>
-									<option value="5" {{if equal $ds.Algorithm 5}}selected="selected"{{end}}>RSA/SHA-1</option>
-									<option value="6" {{if equal $ds.Algorithm 6}}selected="selected"{{end}}>DSA/SHA-1 (NSEC3)</option>
-									<option value="7" {{if equal $ds.Algorithm 7}}selected="selected"{{end}}>RSA/SHA-1 (NSEC3)</option>
-									<option value="8" {{if equal $ds.Algorithm 8}}selected="selected"{{end}}>RSA/SHA-256 (NSEC3)</option>
-									<option value="10" {{if equal $ds.Algorithm 10}}selected="selected"{{end}}>RSA/SHA-512 (NSEC3)</option>
+									<option value="3" {{if eq $ds.Algorithm 3}}selected="selected"{{end}}>DSA/SHA-1</option>
+									<option value="5" {{if eq $ds.Algorithm 5}}selected="selected"{{end}}>RSA/SHA-1</option>
+									<option value="6" {{if eq $ds.Algorithm 6}}selected="selected"{{end}}>DSA/SHA-1 (NSEC3)</option>
+									<option value="7" {{if eq $ds.Algorithm 7}}selected="selected"{{end}}>RSA/SHA-1 (NSEC3)</option>
+									<option value="8" {{if eq $ds.Algorithm 8}}selected="selected"{{end}}>RSA/SHA-256 (NSEC3)</option>
+									<option value="10" {{if eq $ds.Algorithm 10}}selected="selected"{{end}}>RSA/SHA-512 (NSEC3)</option>
 								</select>
 								{{if hasErrors $algorithm $errors}}
 								<div class="field-error-msg">
@@ -239,8 +239,8 @@ $ dig @recursive.rafael.net.br example. dnskey +dnssec +m
 								{{$digestType := getDigestType $index}}
 								<label for="ds{{$index}}-digest-type">Digest Type</label>
 								<select name="ds{{$index}}-digest-type" id="ds{{$index}}-digest-type" {{if hasErrors $digestType $errors}}class="error"{{end}}>
-									<option value="1" {{if equal $ds.DigestType 1}}selected="selected"{{end}}>SHA-1</option>
-									<option value="2" {{if equal $ds.DigestType 2}}selected="selected"{{end}}>SHA-256</option>
+									<option value="1" {{if eq $ds.DigestType 1}}selected="selected"{{end}}>SHA-1</option>
+									<option value="2" {{if eq $ds.DigestType 2}}selected="selected"{{end}}>SHA-256</option>
 								</select>
 								{{if hasErrors $digestType $errors}}
 								<div class="field-error-msg">
