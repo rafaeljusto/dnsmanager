@@ -1,0 +1,11 @@
+. 		      86400 IN SOA ns1.root. rafael.justo.net.br (
+	    2015083100 	; serial
+	    86400		; refresh
+	    86400		; retry
+	    86400		; expire
+	    900 )		; minimum
+
+. 		      86400 IN NS ns1.root.
+
+; Change to the IP of your root server
+ns1.root. 	86400 IN A 131.161.24.10
