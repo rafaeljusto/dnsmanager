@@ -276,7 +276,7 @@ func updateRootZone(domain *Domain) bool {
 	cmdFile.WriteString("quit")
 	cmdFile.Close()
 
-	cmd := exec.Command("/usr/local/bind/bin/nsupdate", "-l", "-k", "conf/key.conf", "-p", "53", cmdFile.Name())
+	cmd := exec.Command("/usr/local/bind/bin/nsupdate", "-l", "-p", "53", cmdFile.Name())
 
 	var cmdErr bytes.Buffer
 	cmd.Stderr = &cmdErr
