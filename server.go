@@ -276,7 +276,7 @@ func updateRootZone(domain *Domain) bool {
 	cmdFile.WriteString("quit")
 	cmdFile.Close()
 
-	cmd := exec.Command("/usr/local/bind/bin/nsupdate", "-l", "-k", "conf/key.conf", "-p", "5353", cmdFile.Name())
+	cmd := exec.Command("/usr/local/bind/bin/nsupdate", "-l", "-k", "conf/key.conf", "-p", "53", cmdFile.Name())
 
 	var cmdErr bytes.Buffer
 	cmd.Stderr = &cmdErr
@@ -406,7 +406,7 @@ func retrieveDomains() map[string]*Domain {
 		TsigSecret: map[string]string{"transfer-key.": "zasDqD5nW1USPh4vhLfDBw=="},
 	}
 
-	transferChannel, err := transfer.In(msg, "localhost:5353")
+	transferChannel, err := transfer.In(msg, "localhost:53")
 	if err != nil {
 		log.Printf("Error retrieving zones: %s", err.Error())
 		return domains
