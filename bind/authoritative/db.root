@@ -1,11 +1,23 @@
-. 		      86400 IN SOA ns1.root. rafael.justo.net.br (
-	    2015083100 	; serial
-	    86400		; refresh
-	    86400		; retry
-	    86400		; expire
-	    900 )		; minimum
+.           86400 IN SOA ns1.root. rafael.justo.net.br (
+              2015083100 ; serial
+              86400      ; refresh
+              86400      ; retry
+              86400      ; expire
+              900 )      ; minimum
 
-. 		      86400 IN NS ns1.root.
+.           86400 IN NS ns1.root.
 
 ; Change to the IP of your root server
-ns1.root. 	86400 IN A 131.161.24.10
+ns1.root.   86400 IN A 131.161.24.10
+
+com.        86400 IN NS ns1.com.
+com.        86400 IN NS ns2.com.
+com.        86400 IN DS 30909 8 2 E2D3C916F6DEEAC73294E8268FB5885044A833FC5459588F4A9184CF C41A5766
+ns1.com.    86400 IN A  192.5.6.30
+ns2.com.    86400 IN A  192.33.14.30
+
+br.         86400 IN NS ns1.br.
+br.         86400 IN NS ns2.br.
+br.         86400 IN DS 45673 5 2 14369AD309CC59FD59C1A422BA93B71F2C522BF3672C2E067B2C53F5 3AE522DF
+ns1.br.     86400 IN A  200.160.0.10
+ns2.br.     86400 IN A  200.189.41.10

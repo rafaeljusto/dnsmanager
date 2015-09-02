@@ -31,6 +31,6 @@ class bind9 {
     enable     => true,
     hasstatus  => true,
     hasrestart => true,
-    subscribe  => [ File["/home/qualificati/etc/bind/named.conf"] ],
+    subscribe  => [ File["/etc/bind/named.conf"] ],
   }
 }
