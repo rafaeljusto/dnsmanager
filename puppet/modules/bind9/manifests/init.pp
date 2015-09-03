@@ -13,6 +13,7 @@ class bind9 {
 
   file { "/home/qualificati/etc/bind/named.conf":
     ensure  => "present",
+    replace => false,
     require => [
       File["/home/qualificati/etc"],
       File["/home/qualificati/etc/bind"],
