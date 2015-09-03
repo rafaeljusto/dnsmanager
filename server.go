@@ -483,6 +483,11 @@ func retrieveDomains() map[string]*Domain {
 }
 
 func checkDelegation(domain *Domain) (errs map[string][]string) {
+	if len(domain.Nameservers[0].Name) == 0 && len(domain.Nameservers[1].Name) == 0 {
+		errs["generic"] = append(errs["generic"], "You must inform a nameserver!")
+		return
+	}
+
 	if len(domain.Nameservers[0].Name) > 0 {
 		errs = checkNS(domain.Nameservers[0], domain.Name, "ns0")
 	}
@@ -534,6 +539,11 @@ func checkNS(ns *Nameserver, fqdn, fieldPrefix string) (errs map[string][]string
 }
 
 func checkDSs(DSs []*DS, ns *Nameserver, fqdn string) (errs map[string][]string) {
+	if len(ns.Name) == 0 {
+		// Don't need to check DS if the nameserver is empty
+		return
+	}
+
 	errs = make(map[string][]string)
 
 	msg := new(dns.Msg)
