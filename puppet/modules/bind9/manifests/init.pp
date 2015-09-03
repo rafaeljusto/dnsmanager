@@ -12,7 +12,7 @@ class bind9 {
   }
 
   file { "/home/qualificati/etc/bind/named.conf":
-    ensure  => file,
+    ensure  => "present",
     require => [
       File["/home/qualificati/etc"],
       File["/home/qualificati/etc/bind"],
@@ -24,7 +24,7 @@ class bind9 {
   }
 
   file { "/etc/bind/named.conf":
-    ensure  => link,
+    ensure  => "link",
     require => File["/home/qualificati/etc/bind/named.conf"],
     target  => "/home/qualificati/etc/bind/named.conf",
     owner   => "root",
@@ -40,7 +40,7 @@ class bind9 {
   }
 
   file { "/etc/apparmor.d/usr.sbin.named":
-    ensure  => file,
+    ensure  => "file",
     require => File["/etc/bind/named.conf"],
     source  => "puppet:///modules/bind9/usr.sbin.named",
     notify  => Service["apparmor"],
