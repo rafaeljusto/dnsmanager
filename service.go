@@ -1,9 +1,17 @@
 package dnsmanager
 
-import "net"
+import (
+	"net"
+	"regexp"
+	"strings"
+)
 
 const (
 	dnsPort = 53
+)
+
+var (
+	fqdnRX = regexp.MustCompile(`^((([a-z0-9][a-z0-9\-]*[a-z0-9])|[a-z0-9]+)\.)*([a-z]+|xn\-\-[a-z0-9]+)\.?$`)
 )
 
 type ServiceConfig struct {
@@ -31,12 +39,54 @@ type service struct {
 }
 
 func (s service) Save(domain Domain) error {
-	// TODO: Check blocked TLDs
-	if err := checkDelegation(domain); err != nil {
+	if err := s.validate(domain); err != nil {
+		return err
+	}
+
+	if err := checkDelegation(domain, s.config.DNSCheckPort); err != nil {
 		return err
 	}
 
 	return nsupdate(domain, s.config.DNSServer.Port)
+}
+
+func (s service) validate(domain Domain) error {
+	var errBox ErrorBox
+
+	domain.FQDN = strings.TrimSpace(domain.FQDN)
+	domain.FQDN = strings.ToLower(domain.FQDN)
+	domain.FQDN = strings.TrimRight(domain.FQDN, ".")
+
+	if !fqdnRX.MatchString(domain.FQDN) {
+		errBox.Append(NewGenericError(GenericErrorCodeInvalidFQDN))
+	}
+
+	for i, ns := range domain.Nameservers {
+		ns.Name = strings.TrimSpace(ns.Name)
+		ns.Name = strings.ToLower(ns.Name)
+		ns.Name = strings.TrimRight(ns.Name, ".")
+		domain.Nameservers[i] = ns
+
+		if !fqdnRX.MatchString(ns.Name) {
+			errBox.Append(NewDNSError(DNSErrorCodeInvalidFQDN, i, nil))
+		}
+	}
+
+	for i, ds := range domain.DSSet {
+		ds.Digest = strings.Replace(ds.Digest, " ", "", -1)
+		ds.Digest = strings.ToUpper(ds.Digest)
+		domain.DSSet[i] = ds
+	}
+
+	labels := strings.Split(domain.FQDN, ".")
+	tld := labels[len(labels)-1]
+	for _, blockedTLD := range s.config.BlockedTLDs {
+		if tld == blockedTLD {
+			errBox.Append(NewGenericError(GenericErrorCodeBlockedTLD))
+		}
+	}
+
+	return errBox.Unpack()
 }
 
 func (s service) Retrieve(tsig *TSigOptions) ([]Domain, error) {

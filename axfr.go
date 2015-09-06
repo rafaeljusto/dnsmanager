@@ -48,7 +48,7 @@ func axfr(address net.IP, port int, zone string, tsigOptions *TSigOptions) ([]Do
 	}
 
 	domains := make(map[string]Domain)
-	glues := make(map[string]string)
+	glues := make(map[string][]net.IP)
 
 	for {
 		response, ok := <-transferChannel
@@ -61,7 +61,7 @@ func axfr(address net.IP, port int, zone string, tsigOptions *TSigOptions) ([]Do
 		}
 
 		for _, rr := range response.RR {
-			// Ignore APEX records
+			// ignore APEX records
 			if rr.Header().Name == zone {
 				continue
 			}
@@ -71,7 +71,7 @@ func axfr(address net.IP, port int, zone string, tsigOptions *TSigOptions) ([]Do
 				nsRR := rr.(*dns.NS)
 
 				domain := domains[rr.Header().Name]
-				domain.Name = rr.Header().Name
+				domain.FQDN = rr.Header().Name
 				domain.Nameservers = append(domain.Nameservers, Nameserver{
 					Name: nsRR.Ns,
 				})
@@ -81,10 +81,10 @@ func axfr(address net.IP, port int, zone string, tsigOptions *TSigOptions) ([]Do
 				dsRR := rr.(*dns.DS)
 
 				domain := domains[rr.Header().Name]
-				domain.Name = rr.Header().Name
-				domain.DSs = append(domain.DSs, DS{
-					KeyTag:     int(dsRR.KeyTag),
-					Algorithm:  int(dsRR.Algorithm),
+				domain.FQDN = rr.Header().Name
+				domain.DSSet = append(domain.DSSet, DS{
+					KeyTag:     dsRR.KeyTag,
+					Algorithm:  dsRR.Algorithm,
 					DigestType: dsRR.DigestType,
 					Digest:     strings.ToUpper(dsRR.Digest),
 				})
@@ -92,7 +92,11 @@ func axfr(address net.IP, port int, zone string, tsigOptions *TSigOptions) ([]Do
 
 			case dns.TypeA:
 				aRR := rr.(*dns.A)
-				glues[aRR.Header().Name] = aRR.A.String()
+				glues[aRR.Header().Name] = append(glues[aRR.Header().Name], aRR.A)
+
+			case dns.TypeAAAA:
+				aaaaRR := rr.(*dns.AAAA)
+				glues[aaaaRR.Header().Name] = append(glues[aaaaRR.Header().Name], aaaaRR.AAAA)
 			}
 		}
 	}
@@ -102,7 +106,7 @@ func axfr(address net.IP, port int, zone string, tsigOptions *TSigOptions) ([]Do
 	for _, domain := range domains {
 		for i, nameserver := range domain.Nameservers {
 			if glue, ok := glues[nameserver.Name]; ok {
-				nameserver.Glue = glue
+				nameserver.Glues = glue
 				domain.Nameservers[i] = nameserver
 			}
 		}

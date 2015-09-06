@@ -21,23 +21,27 @@ func nsupdate(domain Domain, dnsPort int) error {
 	defer os.Remove(cmdFile.Name())
 
 	// remove all nameservers before adding the new ones
-	fmt.Fprintf(cmdFile, "update delete %s NS\n", domain.Name)
+	fmt.Fprintf(cmdFile, "update delete %s NS\n", domain.FQDN)
 
 	for _, ns := range domain.Nameservers {
-		fmt.Fprintf(cmdFile, "update add %s 172800 NS %s\n", domain.Name, ns.Name)
+		fmt.Fprintf(cmdFile, "update add %s 172800 NS %s\n", domain.FQDN, ns.Name)
 		fmt.Fprintf(cmdFile, "update delete %s A\n", ns.Name)
 
-		if len(ns.Glue) > 0 {
-			fmt.Fprintf(cmdFile, "update add %s 172800 A %s\n", ns.Name, ns.Glue)
+		for _, glue := range ns.Glues {
+			if glue.To4() != nil {
+				fmt.Fprintf(cmdFile, "update add %s 172800 A %s\n", ns.Name, glue.String())
+			} else {
+				fmt.Fprintf(cmdFile, "update add %s 172800 AAAA %s\n", ns.Name, glue.String())
+			}
 		}
 	}
 
 	// remove all ds records before adding the new ones
-	fmt.Fprintf(cmdFile, "update delete %s DS\n", domain.Name)
+	fmt.Fprintf(cmdFile, "update delete %s DS\n", domain.FQDN)
 
-	for _, ds := range domain.DSs {
+	for _, ds := range domain.DSSet {
 		fmt.Fprintf(cmdFile, "update add %s 172800 DS %d %d %d %s\n",
-			domain.Name, ds.KeyTag, ds.Algorithm, ds.DigestType, ds.Digest)
+			domain.FQDN, ds.KeyTag, ds.Algorithm, ds.DigestType, ds.Digest)
 	}
 
 	fmt.Fprintln(cmdFile, "send")
