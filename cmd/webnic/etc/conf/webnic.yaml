@@ -1,0 +1,27 @@
+home: "/usr/local/webnic/"
+
+listen:
+  port: 80
+
+template path: "templates"
+assets path: "assets"
+
+tsig:
+  name: "transfer-key."
+  algorithm: "hmac-md5.sig-alg.reg.int."
+  secret: "zasDqD5nW1USPh4vhLfDBw=="
+
+dns manager:
+  # Information to retrieve the domains from the DNS server via AXFR
+  dns server:
+    address: 127.0.0.1
+    port: 53
+    zone: "."
+
+  # List of TLDs that cannot be registered in the interface
+  blocked TLDs:
+    - com
+    - br
+
+  # DNS port to check of the registered domains
+  dns check port: 53
