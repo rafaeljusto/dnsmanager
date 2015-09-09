@@ -5,8 +5,8 @@ import (
 
 	"github.com/rafaeljusto/dnsmanager"
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/gustavo-hms/trama"
-	handyinterceptor "github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/trajber/handy/interceptor"
 	"github.com/rafaeljusto/dnsmanager/cmd/webnic/config"
+	"github.com/rafaeljusto/dnsmanager/cmd/webnic/interceptor"
 )
 
 func init() {
@@ -16,11 +16,12 @@ func init() {
 }
 
 type domain struct {
-	trama.NopHandler
+	interceptor.PostCompliant
+
 	Domain dnsmanager.Domain `request:"post"`
 }
 
-func (d *domain) Get(response trama.Response, r *http.Request) {
+func (d *domain) Get(response trama.Response, r *http.Request) error {
 	templateData := NewTemplateData()
 	templateData.Action = "/domain"
 	templateData.NewDomain = true
@@ -39,19 +40,20 @@ func (d *domain) Get(response trama.Response, r *http.Request) {
 	service := dnsmanager.NewService(config.WebNIC.DNSManager)
 	templateData.RegisteredDomains, err = service.Retrieve(&config.WebNIC.TSig)
 	if err != nil {
-		// TODO
+		return err
 	}
 
 	response.ExecuteTemplate("domain.html", &templateData)
+	return nil
 }
 
-func (d *domain) Post(response trama.Response, r *http.Request) {
+func (d *domain) Post(response trama.Response, r *http.Request) error {
 	templateData := NewTemplateData()
 	templateData.Domain = d.Domain
 
 	service := dnsmanager.NewService(config.WebNIC.DNSManager)
-	if err := service.Save(domain); err != nil {
-		// TODO!
+	if err := service.Save(d.Domain); err != nil {
+		return err
 	}
 
 	templateData.Success = true
@@ -61,10 +63,11 @@ func (d *domain) Post(response trama.Response, r *http.Request) {
 	var err error
 	templateData.RegisteredDomains, err = service.Retrieve(&config.WebNIC.TSig)
 	if err != nil {
-		// TODO
+		return err
 	}
 
 	response.ExecuteTemplate("domain.html", &templateData)
+	return nil
 }
 
 func (d *domain) Templates() trama.TemplateGroupSet {
@@ -73,6 +76,6 @@ func (d *domain) Templates() trama.TemplateGroupSet {
 
 func (d *domain) Interceptors() trama.InterceptorChain {
 	return trama.NewInterceptorChain(
-		handyinterceptor.NewURIVars(d),
+		interceptor.NewPOST(d),
 	)
 }

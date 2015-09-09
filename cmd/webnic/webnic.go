@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net"
@@ -10,7 +11,6 @@ import (
 	"path"
 	"path/filepath"
 	"strconv"
-	"text/template"
 
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/codegangsta/cli"
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/gustavo-hms/trama"
@@ -98,11 +98,7 @@ func initializeTrama() {
 		},
 	}
 
-	assetsPath := path.Join(config.WebNIC.Home, config.WebNIC.AssetsPath)
-
 	handler.Mux.GlobalTemplates = groupSet
-	handler.Mux.RegisterStatic("/docs", http.Dir(assetsPath))
-
 	if err := handler.Mux.ParseTemplates(); err != nil {
 		log.Fatalf("exiting after an error loading templates. Details: %s\n", err)
 	}
@@ -120,11 +116,12 @@ func startServer() {
 		log.Fatal(err)
 	}
 
-	server := http.Server{
-		Handler: handler.Mux,
-	}
+	assetsPath := path.Join(config.WebNIC.Home, config.WebNIC.AssetsPath)
 
-	if err := server.Serve(ln); err != nil {
+	http.Handle("/docs/", http.StripPrefix("/docs/", http.FileServer(http.Dir(assetsPath))))
+	http.Handle("/", handler.Mux)
+
+	if err := http.Serve(ln, nil); err != nil {
 		log.Fatalf("error running server: %s", err)
 	}
 }

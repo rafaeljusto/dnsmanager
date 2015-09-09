@@ -23,24 +23,23 @@ func NewPOST(h poster) *Post {
 	return &Post{handler: h}
 }
 
-func (p *Post) Before(response trama.Response, r *http.Request) {
+func (p *Post) Before(response trama.Response, r *http.Request) error {
 	if r.Method != "POST" {
-		return
+		return nil
 	}
 
 	p.parse()
 
 	request := p.handler.RequestValue()
 	if !request.IsValid() {
-		return
+		return nil
 	}
 
 	decoder := schema.NewDecoder()
 	decoder.IgnoreUnknownKeys(true)
 
 	if err := r.ParseForm(); err != nil {
-		// TODO: response.ExecuteTemplate(...)
-		return
+		return err
 	}
 
 	if request.CanAddr() {
@@ -49,10 +48,11 @@ func (p *Post) Before(response trama.Response, r *http.Request) {
 
 	err := decoder.Decode(request.Interface(), r.Form)
 	if err == nil {
-		return
+		return nil
 	}
 
 	// TODO: Check druns project to identify errors
+	return err
 }
 
 func (p *Post) parse() {
@@ -67,4 +67,16 @@ func (p *Post) parse() {
 			break
 		}
 	}
+}
+
+type PostCompliant struct {
+	request reflect.Value
+}
+
+func (p *PostCompliant) RequestValue() reflect.Value {
+	return p.request
+}
+
+func (p *PostCompliant) SetRequestValue(r reflect.Value) {
+	p.request = r
 }

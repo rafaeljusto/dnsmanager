@@ -16,17 +16,20 @@ func init() {
 }
 
 type savedDomain struct {
-	trama.NopHandler
+	defaultHandler
+	handyinterceptor.IntrospectorCompliant
+	interceptor.PostCompliant
+
 	FQDN   string            `urivar:"fqdn"`
 	Domain dnsmanager.Domain `request:"post"`
 }
 
-func (d *savedDomain) Get(response trama.Response, r *http.Request) {
-
+func (d *savedDomain) Get(response trama.Response, r *http.Request) error {
+	return nil
 }
 
-func (d *savedDomain) Post(response trama.Response, r *http.Request) {
-
+func (d *savedDomain) Post(response trama.Response, r *http.Request) error {
+	return nil
 }
 
 func (d *savedDomain) Templates() trama.TemplateGroupSet {
@@ -35,7 +38,7 @@ func (d *savedDomain) Templates() trama.TemplateGroupSet {
 
 func (d *savedDomain) Interceptors() trama.InterceptorChain {
 	return trama.NewInterceptorChain(
-		handyinterceptor.NewURIVars(d),
+		interceptor.NewURIVars(d),
 		interceptor.NewPOST(d),
 	)
 }
