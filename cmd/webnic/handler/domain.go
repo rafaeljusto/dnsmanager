@@ -6,7 +6,6 @@ import (
 	"github.com/rafaeljusto/dnsmanager"
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/gustavo-hms/trama"
 	"github.com/rafaeljusto/dnsmanager/cmd/webnic/config"
-	"github.com/rafaeljusto/dnsmanager/cmd/webnic/interceptor"
 )
 
 func init() {
@@ -16,8 +15,7 @@ func init() {
 }
 
 type domain struct {
-	interceptor.PostCompliant
-
+	defaultHandler
 	Domain dnsmanager.Domain `request:"post"`
 }
 
@@ -75,7 +73,5 @@ func (d *domain) Templates() trama.TemplateGroupSet {
 }
 
 func (d *domain) Interceptors() trama.InterceptorChain {
-	return trama.NewInterceptorChain(
-		interceptor.NewPOST(d),
-	)
+	return defaultChain(d)
 }

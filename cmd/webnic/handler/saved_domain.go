@@ -5,8 +5,6 @@ import (
 
 	"github.com/rafaeljusto/dnsmanager"
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/gustavo-hms/trama"
-	handyinterceptor "github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/trajber/handy/interceptor"
-	"github.com/rafaeljusto/dnsmanager/cmd/webnic/interceptor"
 )
 
 func init() {
@@ -17,9 +15,6 @@ func init() {
 
 type savedDomain struct {
 	defaultHandler
-	handyinterceptor.IntrospectorCompliant
-	interceptor.PostCompliant
-
 	FQDN   string            `urivar:"fqdn"`
 	Domain dnsmanager.Domain `request:"post"`
 }
@@ -37,8 +32,5 @@ func (d *savedDomain) Templates() trama.TemplateGroupSet {
 }
 
 func (d *savedDomain) Interceptors() trama.InterceptorChain {
-	return trama.NewInterceptorChain(
-		interceptor.NewURIVars(d),
-		interceptor.NewPOST(d),
-	)
+	return defaultChain(d)
 }
