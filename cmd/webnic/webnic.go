@@ -10,25 +10,13 @@ import (
 	"path"
 	"path/filepath"
 	"strconv"
-	"strings"
+	"text/template"
 
-	"github.com/codegangsta/cli"
-	"github.com/rafaeljusto/dnsmanager"
-	"gopkg.in/yaml.v2"
+	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/codegangsta/cli"
+	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/gustavo-hms/trama"
+	"github.com/rafaeljusto/dnsmanager/cmd/webnic/config"
+	"github.com/rafaeljusto/dnsmanager/cmd/webnic/handler"
 )
-
-var config = struct {
-	Home   string
-	Log    string
-	Listen struct {
-		Address net.IP
-		Port    int
-	}
-	TemplatePath string `yaml: "template path"`
-	AssetsPath   string `yaml: "assets path"`
-	TSig         dnsmanager.TSigOptions
-	DNSManager   dnsmanager.ServiceConfig `yaml:"dns manager"`
-}{}
 
 func main() {
 	app := cli.NewApp()
@@ -56,7 +44,7 @@ func main() {
 		loadConfigFile(configFilename)
 		redirectLogOutput()
 		writePIDToFile()
-		initializeTemplates()
+		initializeTrama()
 		startServer()
 	}
 
@@ -64,7 +52,7 @@ func main() {
 }
 
 func loadConfigFile(file string) {
-	if err := yaml.Unmarshal([]byte(file), &config); err != nil {
+	if err := config.Load(file); err != nil {
 		log.Fatalf("exiting after an error loading configuration file. Details: %s\n", err)
 	}
 
@@ -73,7 +61,7 @@ func loadConfigFile(file string) {
 }
 
 func redirectLogOutput() {
-	logFile := path.Join(config.Home, config.Log)
+	logFile := path.Join(config.WebNIC.Home, config.WebNIC.Log)
 
 	f, err := os.OpenFile(logFile, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
@@ -85,91 +73,58 @@ func redirectLogOutput() {
 
 func writePIDToFile() {
 	pid := strconv.Itoa(os.Getpid())
-	pidFile := path.Join(config.Home, "webnic.pid")
+	pidFile := path.Join(config.WebNIC.Home, "webnic.pid")
 
 	if err := ioutil.WriteFile(pidFile, []byte(pid), 0644); err != nil {
 		log.Fatalf("cannot write PID [%s] to file %s\n", pid, pidFile)
 	}
 }
 
+func initializeTrama() {
+	// TODO: Trama recover
+
+	groupSet := trama.NewTemplateGroupSet(nil)
+	groupSet.FuncMap = template.FuncMap{
+		"hasErrors": func(field string, errors map[string][]string) bool {
+			_, exists := errors[field]
+			return exists
+		},
+		"getErrors": func(field string, errors map[string][]string) []string {
+			return errors[field]
+		},
+		"plusplus": func(number int) int {
+			number++
+			return number
+		},
+	}
+
+	assetsPath := path.Join(config.WebNIC.Home, config.WebNIC.AssetsPath)
+
+	handler.Mux.GlobalTemplates = groupSet
+	handler.Mux.RegisterStatic("/docs", http.Dir(assetsPath))
+
+	if err := handler.Mux.ParseTemplates(); err != nil {
+		log.Fatalf("exiting after an error loading templates. Details: %s\n", err)
+	}
+}
+
 func startServer() {
 	var host string
-	if config.Listen.Address != nil {
-		host = config.Listen.Address.String()
+	if config.WebNIC.Listen.Address != nil {
+		host = config.WebNIC.Listen.Address.String()
 	}
-	hostAndPort := net.JoinHostPort(host, strconv.Itoa(config.Listen.Port))
+	hostAndPort := net.JoinHostPort(host, strconv.Itoa(config.WebNIC.Listen.Port))
 
 	ln, err := net.Listen("tcp", hostAndPort)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	assetsPath := path.Join(config.Home, config.AssetsPath)
+	server := http.Server{
+		Handler: handler.Mux,
+	}
 
-	http.Handle("/docs/", http.StripPrefix("/docs/", http.FileServer(http.Dir(assetsPath))))
-	http.HandleFunc("/", ServeHTTP)
-
-	if err := http.Serve(ln, nil); err != nil {
+	if err := server.Serve(ln); err != nil {
 		log.Fatalf("error running server: %s", err)
-	}
-}
-
-func ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	service := dnsmanager.NewService(config.DNSManager)
-
-	var templateData TemplateData
-	templateData.Errors = make(map[string][]string)
-
-	if r.RequestURI == "/domain" || r.RequestURI == "/domain/" {
-		if r.Method == "GET" {
-			templateData.Action = "/domain"
-			templateData.NewDomain = true
-
-			// For now we are going to show only two nameservers
-			for i := 0; i < 2; i++ {
-				templateData.Domain.Nameservers = append(templateData.Domain.Nameservers, dnsmanager.Nameserver{})
-			}
-
-			// For now we are going to show only two DSs
-			for i := 0; i < 2; i++ {
-				templateData.Domain.DSSet = append(templateData.Domain.DSSet, dnsmanager.DS{})
-			}
-
-		} else if r.Method == "POST" {
-			domain, errs := loadForm(r)
-			templateData.Domain = domain
-			templateData.Errors = errs
-
-			if len(templateData.Errors) == 0 {
-				if err := service.Save(domain); err != nil {
-					// TODO!
-				}
-
-				templateData.Success = true
-				templateData.NewDomain = false
-				templateData.Action = "/domain/" + domain.FQDN
-			}
-
-		} else {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-
-	} else if strings.HasPrefix(r.RequestURI, "/domain/") {
-		// TODO: Update domain!
-
-	} else {
-		http.Redirect(w, r, "/domain", http.StatusFound)
-	}
-
-	var err error
-	templateData.RegisteredDomains, err = service.Retrieve(&config.TSig)
-	if err != nil {
-		log.Printf("error retrieving domains: %s", err)
-	}
-
-	if err := domainTemplate.ExecuteTemplate(w, "domain.tmpl.html", templateData); err != nil {
-		log.Printf("error parsing template: %s", err)
-		http.Error(w, "", http.StatusInternalServerError)
 	}
 }
