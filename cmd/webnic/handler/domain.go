@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"html/template"
 	"net/http"
 	"path"
 
@@ -68,7 +69,14 @@ func (d *domain) Post(response trama.Response, r *http.Request) error {
 }
 
 func (d *domain) Templates() trama.TemplateGroupSet {
-	groupSet := trama.NewTemplateGroupSet(templateFuncs)
+	// avoid using the global variable because is going to be reused between
+	// all handlers
+	localTemplateFuncs := make(template.FuncMap)
+	for k, v := range templateFuncs {
+		localTemplateFuncs[k] = v
+	}
+
+	groupSet := trama.NewTemplateGroupSet(localTemplateFuncs)
 
 	for _, language := range config.WebNIC.Templates.Languages {
 		templatePath := path.Join(config.WebNIC.Home, config.WebNIC.Templates.Path, language, "domain.tmpl.html")
