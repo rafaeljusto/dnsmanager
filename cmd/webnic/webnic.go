@@ -36,9 +36,9 @@ func main() {
 		configFilename := c.String("config")
 
 		if configFilename == "" {
-			fmt.Printf("missing 'config' argument\n")
+			fmt.Println("error: missing 'config' argument")
 			cli.ShowAppHelp(c)
-			os.Exit(-1)
+			os.Exit(1)
 		}
 
 		loadConfigFile(configFilename)
@@ -53,7 +53,7 @@ func main() {
 
 func loadConfigFile(file string) {
 	if err := config.Load(file); err != nil {
-		log.Fatalf("exiting after an error loading configuration file. Details: %s\n", err)
+		log.Fatalf("error loading configuration file: %s\n", err)
 	}
 
 	abs, _ := filepath.Abs(file)
@@ -65,7 +65,8 @@ func redirectLogOutput() {
 
 	f, err := os.OpenFile(logFile, os.O_RDWR|os.O_APPEND|os.O_CREATE, 0644)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("error opening log:", err)
+		os.Exit(1)
 	}
 
 	log.SetOutput(f)
@@ -76,7 +77,7 @@ func writePIDToFile() {
 	pidFile := path.Join(config.WebNIC.Home, "webnic.pid")
 
 	if err := ioutil.WriteFile(pidFile, []byte(pid), 0644); err != nil {
-		log.Fatalf("cannot write PID [%s] to file %s\n", pid, pidFile)
+		log.Fatalf("error: cannot write PID [%s] to file %s\n", pid, pidFile)
 	}
 }
 
@@ -100,7 +101,7 @@ func initializeTrama() {
 
 	handler.Mux.GlobalTemplates = groupSet
 	if err := handler.Mux.ParseTemplates(); err != nil {
-		log.Fatalf("exiting after an error loading templates. Details: %s\n", err)
+		log.Fatalf("error loading templates: %s\n", err)
 	}
 }
 

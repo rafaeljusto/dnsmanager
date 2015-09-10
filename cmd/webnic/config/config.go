@@ -1,6 +1,7 @@
 package config
 
 import (
+	"io/ioutil"
 	"net"
 
 	"github.com/rafaeljusto/dnsmanager"
@@ -14,12 +15,20 @@ var WebNIC = struct {
 		Address net.IP
 		Port    int
 	}
-	TemplatePath string `yaml: "template path"`
-	AssetsPath   string `yaml: "assets path"`
-	TSig         dnsmanager.TSigOptions
-	DNSManager   dnsmanager.ServiceConfig `yaml:"dns manager"`
+	Templates struct {
+		Path      string
+		Languages []string
+	}
+	AssetsPath string `yaml: "assets path"`
+	TSig       dnsmanager.TSigOptions
+	DNSManager dnsmanager.ServiceConfig `yaml:"dns manager"`
 }{}
 
 func Load(file string) error {
-	return yaml.Unmarshal([]byte(file), &WebNIC)
+	data, err := ioutil.ReadFile(file)
+	if err != nil {
+		return err
+	}
+
+	return yaml.Unmarshal(data, &WebNIC)
 }

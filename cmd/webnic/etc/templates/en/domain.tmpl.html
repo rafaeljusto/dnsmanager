@@ -128,7 +128,7 @@ $ dig @recursive.rafael.net.br example. dnskey +dnssec +m
 								</tr>
 							</thead>
 							<tbody>
-							{{range _, $domain := .RegisteredDomains}}
+							{{range $domain := .RegisteredDomains}}
 								<tr>
 									<td><a href="/domain/{{$domain.FQDN}}">{{$domain.FQDN}}</a></td>
 									<td>{{print $domain}}</td>

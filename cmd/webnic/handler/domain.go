@@ -2,6 +2,7 @@ package handler
 
 import (
 	"net/http"
+	"path"
 
 	"github.com/rafaeljusto/dnsmanager"
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/gustavo-hms/trama"
@@ -41,21 +42,19 @@ func (d *domain) Get(response trama.Response, r *http.Request) error {
 		return err
 	}
 
-	response.ExecuteTemplate("domain.html", &templateData)
+	response.ExecuteTemplate("domain.tmpl.html", &templateData)
 	return nil
 }
 
 func (d *domain) Post(response trama.Response, r *http.Request) error {
-	templateData := NewTemplateData()
-	templateData.Domain = d.Domain
-
 	service := dnsmanager.NewService(config.WebNIC.DNSManager)
 	if err := service.Save(d.Domain); err != nil {
 		return err
 	}
 
+	templateData := NewTemplateData()
+	templateData.Domain = d.Domain
 	templateData.Success = true
-	templateData.NewDomain = false
 	templateData.Action = "/domain/" + d.Domain.FQDN
 
 	var err error
@@ -64,12 +63,22 @@ func (d *domain) Post(response trama.Response, r *http.Request) error {
 		return err
 	}
 
-	response.ExecuteTemplate("domain.html", &templateData)
+	response.ExecuteTemplate("domain.tmpl.html", &templateData)
 	return nil
 }
 
 func (d *domain) Templates() trama.TemplateGroupSet {
-	return trama.NewTemplateGroupSet(templateFuncs)
+	groupSet := trama.NewTemplateGroupSet(templateFuncs)
+
+	for _, language := range config.WebNIC.Templates.Languages {
+		templatePath := path.Join(config.WebNIC.Home, config.WebNIC.Templates.Path, language, "domain.tmpl.html")
+		groupSet.Insert(trama.TemplateGroup{
+			Name:  language,
+			Files: []string{templatePath},
+		})
+	}
+
+	return groupSet
 }
 
 func (d *domain) Interceptors() trama.InterceptorChain {

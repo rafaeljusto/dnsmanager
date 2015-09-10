@@ -1,0 +1,14 @@
+# Upstart job configuration file
+
+description   "Web NIC - Simulation"
+author        "Rafael Dantas Justo"
+
+start on filesystem and (started networking)
+
+respawn
+respawn limit 5 10
+
+exec start-stop-daemon \
+  --start
+  --exec /usr/local/webnic/webnic \
+  -- -c /usr/local/webnic/conf/webnic.yaml

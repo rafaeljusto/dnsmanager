@@ -1,9 +1,14 @@
 home: "/usr/local/webnic/"
+log: "webnic.log"
 
 listen:
   port: 80
 
-template path: "templates"
+templates:
+  path: "templates"
+  languages:
+    - en
+
 assets path: "assets"
 
 tsig:

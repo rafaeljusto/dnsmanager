@@ -31,5 +31,6 @@ func defaultChain(h defaultChainHandler) trama.InterceptorChain {
 	return trama.NewInterceptorChain(
 		interceptor.NewURIVars(h),
 		interceptor.NewPOST(h),
+		interceptor.NewAcceptLanguage(),
 	)
 }
