@@ -15,12 +15,12 @@
 			"Rev": "83d18c92c931a85a1393e7294a74dec23086f89c"
 		},
 		{
-			"ImportPath": "github.com/gustavo-hms/trama",
-			"Rev": "1f82ba0bf9a99240b84986cddde5bbaa55e16ff0"
-		},
-		{
 			"ImportPath": "github.com/miekg/dns",
 			"Rev": "1897a2a983df410a57ff88f8bfe647164b49e373"
+		},
+		{
+			"ImportPath": "github.com/registrobr/trama",
+			"Rev": "1f82ba0bf9a99240b84986cddde5bbaa55e16ff0"
 		},
 		{
 			"ImportPath": "github.com/trajber/handy",

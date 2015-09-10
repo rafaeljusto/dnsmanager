@@ -3,7 +3,7 @@ package handler
 import (
 	"reflect"
 
-	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/gustavo-hms/trama"
+	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/registrobr/trama"
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/trajber/handy"
 	handyinterceptor "github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/trajber/handy/interceptor"
 	"github.com/rafaeljusto/dnsmanager/cmd/webnic/interceptor"

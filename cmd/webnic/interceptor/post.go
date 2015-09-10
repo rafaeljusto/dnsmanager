@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/gorilla/schema"
-	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/gustavo-hms/trama"
+	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/registrobr/trama"
 )
 
 type poster interface {
