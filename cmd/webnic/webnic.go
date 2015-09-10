@@ -84,8 +84,7 @@ func writePIDToFile() {
 func initializeTrama() {
 	// TODO: Trama recover
 
-	groupSet := trama.NewTemplateGroupSet(nil)
-	groupSet.FuncMap = template.FuncMap{
+	groupSet := trama.NewTemplateGroupSet(template.FuncMap{
 		"hasErrors": func(field string, errors map[string][]string) bool {
 			_, exists := errors[field]
 			return exists
@@ -97,7 +96,7 @@ func initializeTrama() {
 			number++
 			return number
 		},
-	}
+	})
 
 	handler.Mux.GlobalTemplates = groupSet
 	if err := handler.Mux.ParseTemplates(); err != nil {
