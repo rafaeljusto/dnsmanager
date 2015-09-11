@@ -4,11 +4,11 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>LACTLD - DNSSEC Lab</title>
-		<link href="/docs/styles/jquery-ui-1.8.22.custom.css" media="all" type="text/css" rel="stylesheet">
-		<link href="/docs/styles/font-awesome.css" media="all" type="text/css" rel="stylesheet">
-		<link href="/docs/styles/interface-style.css" media="all" type="text/css" rel="stylesheet">
-		<link href="/docs/styles/interface-structure.css" media="all" type="text/css" rel="stylesheet">
-		<link href="/docs/styles/dnsmanager.css" media="all" type="text/css" rel="stylesheet">
+		<link href="/assets/styles/jquery-ui-1.8.22.custom.css" media="all" type="text/css" rel="stylesheet">
+		<link href="/assets/styles/font-awesome.css" media="all" type="text/css" rel="stylesheet">
+		<link href="/assets/styles/interface-style.css" media="all" type="text/css" rel="stylesheet">
+		<link href="/assets/styles/interface-structure.css" media="all" type="text/css" rel="stylesheet">
+		<link href="/assets/styles/dnsmanager.css" media="all" type="text/css" rel="stylesheet">
 	</head>
 	<body>
 		<div class="content">
@@ -150,7 +150,7 @@ $ dig @recursive.rafael.net.br example. dnskey +dnssec +m
 						<form method="post" action="{{.Action}}">
 							{{if .NewDomain}}
 							<label for="domain">Domain</label>
-							<input type="text" name="domain" id="domain" value="{{.Domain.Name}}" {{if hasErrors "domain" .Errors}}class="error"{{end}} />
+							<input type="text" name="domain" id="domain" value="{{.Domain.FQDN}}" {{if hasErrors "domain" .Errors}}class="error"{{end}} />
 								{{if hasErrors "domain" .Errors}}
 							<div class="field-error-msg">
 								<ul>
@@ -161,8 +161,8 @@ $ dig @recursive.rafael.net.br example. dnskey +dnssec +m
 							</div>
 								{{end}}
 							{{else}}
-							<h1>{{.Domain.Name}}</h1>
-							<input type="hidden" name="domain" value="{{.Domain.Name}}" />
+							<h1>{{.Domain.FQDN}}</h1>
+							<input type="hidden" name="domain" value="{{.Domain.FQDN}}" />
 							{{end}}
 
 							{{$errors := .Errors}}
@@ -186,7 +186,7 @@ $ dig @recursive.rafael.net.br example. dnskey +dnssec +m
 
 								{{$glue := getGlue $index}}
 								<label for="ns{{$index}}-glue">IP</label>
-								<input type="text" name="ns{{$index}}-glue" id="ns{{$index}}-glue" value="{{$nameserver.Glue}}" {{if hasErrors $glue $errors}}class="error"{{end}} />
+								<input type="text" name="ns{{$index}}-glue" id="ns{{$index}}-glue" value="{{$nameserver.Glues}}" {{if hasErrors $glue $errors}}class="error"{{end}} />
 								{{if hasErrors $glue $errors}}
 								<div class="field-error-msg">
 									<ul>
@@ -199,7 +199,7 @@ $ dig @recursive.rafael.net.br example. dnskey +dnssec +m
 							</fieldset>
 							{{end}}
 
-							{{range $index, $ds := .Domain.DSs}}
+							{{range $index, $ds := .Domain.DSSet}}
 							<fieldset>
 								<legend>DS {{plusplus $index}}</legend>
 
@@ -278,9 +278,9 @@ $ dig @recursive.rafael.net.br example. dnskey +dnssec +m
 			</div>
 		</div>
 
-		<script src='/docs/scripts/jquery-1.7.2.min.js' type='text/javascript'></script>
-		<script src='/docs/scripts/jquery-ui-1.8.22.custom.min.js' type='text/javascript'></script>
-		<script src='/docs/scripts/interface.js' type='text/javascript'></script>
-		<script src='/docs/scripts/dnsmanager.js' type='text/javascript'></script>
+		<script src='/assets/scripts/jquery-1.7.2.min.js' type='text/javascript'></script>
+		<script src='/assets/scripts/jquery-ui-1.8.22.custom.min.js' type='text/javascript'></script>
+		<script src='/assets/scripts/interface.js' type='text/javascript'></script>
+		<script src='/assets/scripts/dnsmanager.js' type='text/javascript'></script>
 	</body>
 </html>

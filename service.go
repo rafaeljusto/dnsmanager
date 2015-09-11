@@ -31,7 +31,9 @@ type Service interface {
 
 var NewService = func(config ServiceConfig) Service {
 	config = setDefaults(config)
-	return nil
+	return service{
+		config: config,
+	}
 }
 
 type service struct {

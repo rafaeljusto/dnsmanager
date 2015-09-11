@@ -10,6 +10,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strconv"
 
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/codegangsta/cli"
@@ -82,7 +83,12 @@ func writePIDToFile() {
 }
 
 func initializeTrama() {
-	// TODO: Trama recover
+	handler.Mux.Recover = func(r interface{}) {
+		const size = 1 << 16
+		buf := make([]byte, size)
+		buf = buf[:runtime.Stack(buf, false)]
+		log.Printf("Panic detected. Details: %v\n%s", r, buf)
+	}
 
 	groupSet := trama.NewTemplateGroupSet(template.FuncMap{
 		"hasErrors": func(field string, errors map[string][]string) bool {
@@ -118,7 +124,7 @@ func startServer() {
 
 	assetsPath := path.Join(config.WebNIC.Home, config.WebNIC.AssetsPath)
 
-	http.Handle("/docs/", http.StripPrefix("/docs/", http.FileServer(http.Dir(assetsPath))))
+	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsPath))))
 	http.Handle("/", handler.Mux)
 
 	if err := http.Serve(ln, nil); err != nil {

@@ -9,6 +9,8 @@ respawn
 respawn limit 5 10
 
 exec start-stop-daemon \
-  --start
+  --start \
   --exec /usr/local/webnic/webnic \
-  -- -c /usr/local/webnic/conf/webnic.yaml
+  -- -c /usr/local/webnic/conf/webnic.yaml \
+     1>> /usr/local/webnic/webnic.stdout.log \
+     2>> /usr/local/webnic/webnic.stderr.log
