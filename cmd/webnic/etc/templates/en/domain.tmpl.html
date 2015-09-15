@@ -2,285 +2,52 @@
 
 <html lang="en">
 	<head>
-		<meta charset="utf-8" />
-		<title>LACTLD - DNSSEC Lab</title>
-		<link href="/assets/styles/jquery-ui-1.8.22.custom.css" media="all" type="text/css" rel="stylesheet">
-		<link href="/assets/styles/font-awesome.css" media="all" type="text/css" rel="stylesheet">
-		<link href="/assets/styles/interface-style.css" media="all" type="text/css" rel="stylesheet">
-		<link href="/assets/styles/interface-structure.css" media="all" type="text/css" rel="stylesheet">
-		<link href="/assets/styles/dnsmanager.css" media="all" type="text/css" rel="stylesheet">
+	  <meta charset="utf-8" />
+    <title>DNSSEC Laboratory</title>
+
+    <style>
+      body {
+        background-color: #f9f9f9;
+        box-sizing: border-box;
+        font-family: "Roboto","Noto",sans-serif;
+        margin: 0em;
+      }
+
+      div.content {
+        border: 1px solid;
+        border-radius: 0.3rem;
+        border-color: #bbb;
+        box-shadow: 0px 0px 1rem #bbb;
+        margin-top: 3rem;
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 80%;
+      }
+
+      div.header {
+        border-top-left-radius: 0.3rem;
+        border-top-right-radius: 0.3rem;
+        box-shadow: 0px 0.1rem 0.1rem #aaa;
+        background-color: #6f7c91;
+        color: #fff;
+        font-size: 2em;
+        font-weight: bold;
+        padding: 1em 1rem 1em 1rem;
+      }
+    </style>
+
+    <script src="/assets/bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+
+    <link rel="import" href="/assets/bower_components/iron-form/iron-form.html">
+    <link rel="import" href="/assets/bower_components/paper-input/paper-input.html">
+    <link rel="import" href="/assets/bower_components/paper-button/paper-button.html">
+    <link rel="import" href="/assets/bower_components/domain-element/domain-element.html">
 	</head>
 	<body>
-		<div class="content">
-			<div class="content-header">
-				LACTLD - DNSSEC Lab (Root Zone)
-			</div>
-			<div class="content-body">
-				<div style="text-align: right">
-					<button id="help">
-						<i class="icon-question-sign"></i> Help
-					</button>
-					<button id="new">
-						<i class="icon-plus"></i> New
-					</button>
-				</div>
-
-				<div id="help-box">
-					<p>Download BIND 9.9.1-P3 <a href="ftp://ftp.isc.org/isc/bind9/9.9.1-P3/bind-9.9.1-P3.tar.gz">here</a>.
-
-					<p>1. Create a zone</p>
-
-					<pre>
-example. 86400 IN SOA ns1.example. admin.example. (
-		2012100200	; version
-		1800		; refresh (30 minutes)
-		900 		; retry (15 minutes)
-		604800		; expire (1 week)
-		900 )		; minimum (15 minutes)
-
-example. 86400	IN NS ns1.example.
-ns1.example.	IN A 200.160.2.3
-					</pre>
-
-					<p>2. Create named.conf</p>
-
-					<pre>
-options {
-	recursion no;
-};
-
-zone “example.” {
-	type master;
-	file “db.example”;
-};
-					</pre>
-
-					<p>3. Generate DNSKEYs</p>
-
-					<pre>
-$ dnssec-keygen -3 -f KSK -r /dev/urandom example.
-$ dnssec-keygen -3 -r /dev/urandom example.
-					</pre>
-
-					<p>4. Sign zone</p>
-
-					<pre>
-$ dnssec-signzone -S -o example. -3 abc123 db.example
-					</pre>
-
-					<p>5. Edit named.conf</p>
-
-					<pre>
-options {
-	recursion no;
-};
-
-zone “example.” {
-	type master;
-	file “db.example<b>.signed</b>”;
-};
-					</pre>
-
-					<p>6. Start the DNS server</p>
-
-					<pre>
-$ named -c /etc/bind/named.conf -u bind -g
-					</pre>
-
-					<p>7. Register the new domain in this web form</p>
-
-					<pre>
-$ cat dsset-example.
-					</pre>
-
-					<p>8. Query your domain</p>
-
-					<pre>
-$ dig @recursive.rafael.net.br example. dnskey +dnssec +m
-					</pre>
-				</div>
-
-				{{if .Success}}
-				<div class="success-msg">
-					Root zone updated successfully!
-				</div>
-				{{end}}
-
-				{{if hasErrors "generic" .Errors}}
-				<div class="error-msg">
-					<ul>
-					{{range $msg := getErrors "generic" .Errors}}
-						<li>{{$msg}}</li>
-					{{end}}
-					</ul>
-				</div>
-				{{end}}
-
-				<section>
-					<header>Registered Domains</header>
-					<br/>
-					<div class="body">
-						<table class="table zebra box with-inner-border">
-							<thead>
-								<tr>
-									<th>Domain</th>
-									<th>Records</th>
-								</tr>
-							</thead>
-							<tbody>
-							{{range $domain := .RegisteredDomains}}
-								<tr>
-									<td><a href="/domain/{{$domain.FQDN}}">{{$domain.FQDN}}</a></td>
-									<td>{{print $domain}}</td>
-								</tr>
-							{{end}}
-							</tbody>
-						</table>
-					</div>
-				</section>
-
-				<br/>
-
-				<section>
-					<header>Configuration</header>
-					{{if .NewDomain}}
-					<br/>
-					{{end}}
-					<div class="body">
-						<form method="post" action="{{.Action}}">
-							{{if .NewDomain}}
-							<label for="domain">Domain</label>
-							<input type="text" name="domain" id="domain" value="{{.Domain.FQDN}}" {{if hasErrors "domain" .Errors}}class="error"{{end}} />
-								{{if hasErrors "domain" .Errors}}
-							<div class="field-error-msg">
-								<ul>
-									{{range $msg := getErrors "domain" .Errors}}
-									<li>{{$msg}}</li>
-									{{end}}
-								</ul>
-							</div>
-								{{end}}
-							{{else}}
-							<h1>{{.Domain.FQDN}}</h1>
-							<input type="hidden" name="domain" value="{{.Domain.FQDN}}" />
-							{{end}}
-
-							{{$errors := .Errors}}
-
-							{{range $index, $nameserver := .Domain.Nameservers}}
-							<fieldset>
-								<legend>Nameserver {{plusplus $index}}</legend>
-				
-								{{$name := getNameserver $index}}
-								<label for="ns{{$index}}">Name</label>
-								<input type="text" name="ns{{$index}}" id="ns{{$index}}" value="{{$nameserver.Name}}" {{if hasErrors $name $errors}}class="error"{{end}} />
-								{{if hasErrors $name $errors}}
-								<div class="field-error-msg">
-									<ul>
-									{{range $msg := getErrors $name $errors}}
-										<li>{{$msg}}</li>
-									{{end}}
-									</ul>
-								</div>
-								{{end}}
-
-								{{$glue := getGlue $index}}
-								<label for="ns{{$index}}-glue">IP</label>
-								<input type="text" name="ns{{$index}}-glue" id="ns{{$index}}-glue" value="{{$nameserver.Glues}}" {{if hasErrors $glue $errors}}class="error"{{end}} />
-								{{if hasErrors $glue $errors}}
-								<div class="field-error-msg">
-									<ul>
-									{{range $msg := getErrors $glue $errors}}
-										<li>{{$msg}}</li>
-									{{end}}
-									</ul>
-								</div>
-								{{end}}
-							</fieldset>
-							{{end}}
-
-							{{range $index, $ds := .Domain.DSSet}}
-							<fieldset>
-								<legend>DS {{plusplus $index}}</legend>
-
-								{{$keytag := getKeytag $index}}
-								<label for="ds{{$index}}-keytag">Key Tag</label>
-								<input type="number" name="ds{{$index}}-keytag" id="ds{{$index}}-keytag" value="{{$ds.KeyTag}}" {{if hasErrors $keytag $errors}}class="error"{{end}} />
-								{{if hasErrors $keytag $errors}}
-								<div class="field-error-msg">
-									<ul>
-									{{range $msg := getErrors $keytag $errors}}
-										<li>{{$msg}}</li>
-									{{end}}
-									</ul>
-								</div>
-								{{end}}
-
-								{{$algorithm := getAlgorithm $index}}
-								<label for="ds{{$index}}-algorithm">Algorithm</label>
-								<select name="ds{{$index}}-algorithm" id="ds{{$index}}-algorithm" {{if hasErrors $algorithm $errors}}class="error"{{end}}>
-									<option value="3" {{if eq $ds.Algorithm 3}}selected="selected"{{end}}>DSA/SHA-1</option>
-									<option value="5" {{if eq $ds.Algorithm 5}}selected="selected"{{end}}>RSA/SHA-1</option>
-									<option value="6" {{if eq $ds.Algorithm 6}}selected="selected"{{end}}>DSA/SHA-1 (NSEC3)</option>
-									<option value="7" {{if eq $ds.Algorithm 7}}selected="selected"{{end}}>RSA/SHA-1 (NSEC3)</option>
-									<option value="8" {{if eq $ds.Algorithm 8}}selected="selected"{{end}}>RSA/SHA-256 (NSEC3)</option>
-									<option value="10" {{if eq $ds.Algorithm 10}}selected="selected"{{end}}>RSA/SHA-512 (NSEC3)</option>
-								</select>
-								{{if hasErrors $algorithm $errors}}
-								<div class="field-error-msg">
-									<ul>
-									{{range $msg := getErrors $algorithm $errors}}
-										<li>{{$msg}}</li>
-									{{end}}
-									</ul>
-								</div>
-								{{end}}
-
-								{{$digestType := getDigestType $index}}
-								<label for="ds{{$index}}-digest-type">Digest Type</label>
-								<select name="ds{{$index}}-digest-type" id="ds{{$index}}-digest-type" {{if hasErrors $digestType $errors}}class="error"{{end}}>
-									<option value="1" {{if eq $ds.DigestType 1}}selected="selected"{{end}}>SHA-1</option>
-									<option value="2" {{if eq $ds.DigestType 2}}selected="selected"{{end}}>SHA-256</option>
-								</select>
-								{{if hasErrors $digestType $errors}}
-								<div class="field-error-msg">
-									<ul>
-									{{range $msg := getErrors $digestType $errors}}
-										<li>{{$msg}}</li>
-									{{end}}
-									</ul>
-								</div>
-								{{end}}
-
-								{{$digest := getDigest $index}}
-								<label for="ds{{$index}}-digest">Digest</label>
-								<input type="text" name="ds{{$index}}-digest" id="ds{{$index}}-digest" value="{{$ds.Digest}}" {{if hasErrors $digest $errors}}class="error"{{end}} />
-								{{if hasErrors $digest $errors}}
-								<div class="field-error-msg">
-									<ul>
-									{{range $msg := getErrors $digest $errors}}
-										<li>{{$msg}}</li>
-									{{end}}
-									</ul>
-								</div>
-								{{end}}
-							</fieldset>
-							{{end}}
-
-							<br/>
-
-							<button name="save">
-								<i class="icon-save"></i> Save
-							</button>
-						</form>
-					</div>
-				</section>
-			</div>
-		</div>
-
-		<script src='/assets/scripts/jquery-1.7.2.min.js' type='text/javascript'></script>
-		<script src='/assets/scripts/jquery-ui-1.8.22.custom.min.js' type='text/javascript'></script>
-		<script src='/assets/scripts/interface.js' type='text/javascript'></script>
-		<script src='/assets/scripts/dnsmanager.js' type='text/javascript'></script>
+    <div class="content">
+      <div class="header">DNSSEC Laboratory</div>
+		  <domain-element></domain-element>
+    </div>
 	</body>
 </html>

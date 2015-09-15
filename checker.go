@@ -83,14 +83,13 @@ func query(fqdn string, ns Nameserver, index int, rrType uint16, dnsCheckPort in
 	msg.SetQuestion(fqdn, rrType)
 	msg.RecursionDesired = false
 
-	server := ns.Name
-	if strings.HasSuffix(ns.Name, fqdn) {
-		if len(ns.Glues) == 0 {
+	server := ns.Hostname
+	if strings.HasSuffix(ns.Hostname, fqdn) {
+		if ns.IPv4 == nil {
 			return nil, NewDNSError(DNSErrorMissingGlue, index, nil)
 		}
 
-		// TODO: Check all glues
-		server = ns.Glues[0].String()
+		server = ns.IPv4.String()
 	}
 
 	hostAndPort := net.JoinHostPort(server, strconv.Itoa(dnsCheckPort))

@@ -3,19 +3,19 @@ package dnsmanager
 import "net"
 
 type Domain struct {
-	FQDN        string       `domain:"fqdn"`
-	Nameservers []Nameserver `domain:"nameservers"`
-	DSSet       []DS         `domain:"dsset"`
+	FQDN        string       `json:"fqdn"`
+	Nameservers []Nameserver `json:"nameservers"`
+	DSSet       []DS         `json:"dsset"`
 }
 
 type Nameserver struct {
-	Name  string   `domain:"name"`
-	Glues []net.IP `domain:"glues"`
+	Hostname string `json:"hostname"`
+	IPv4     net.IP `json:"ipv4"`
 }
 
 type DS struct {
-	KeyTag     uint16 `domain:"key-tag"`
-	Algorithm  uint8  `domain:"algorithm"`
-	DigestType uint8  `domain:"digest-type"`
-	Digest     string `domain:"digest"`
+	KeyTag     uint16 `json:"key-tag"`
+	Algorithm  uint8  `json:"algorithm"`
+	DigestType uint8  `json:"digest-type"`
+	Digest     string `json:"digest"`
 }

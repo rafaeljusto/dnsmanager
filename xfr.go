@@ -48,7 +48,7 @@ func axfr(address net.IP, port int, zone string, tsigOptions *TSigOptions) ([]Do
 	}
 
 	domains := make(map[string]Domain)
-	glues := make(map[string][]net.IP)
+	glues := make(map[string]net.IP)
 
 	for {
 		response, ok := <-transferChannel
@@ -73,7 +73,7 @@ func axfr(address net.IP, port int, zone string, tsigOptions *TSigOptions) ([]Do
 				domain := domains[rr.Header().Name]
 				domain.FQDN = rr.Header().Name
 				domain.Nameservers = append(domain.Nameservers, Nameserver{
-					Name: nsRR.Ns,
+					Hostname: nsRR.Ns,
 				})
 				domains[rr.Header().Name] = domain
 
@@ -92,11 +92,7 @@ func axfr(address net.IP, port int, zone string, tsigOptions *TSigOptions) ([]Do
 
 			case dns.TypeA:
 				aRR := rr.(*dns.A)
-				glues[aRR.Header().Name] = append(glues[aRR.Header().Name], aRR.A)
-
-			case dns.TypeAAAA:
-				aaaaRR := rr.(*dns.AAAA)
-				glues[aaaaRR.Header().Name] = append(glues[aaaaRR.Header().Name], aaaaRR.AAAA)
+				glues[aRR.Header().Name] = aRR.A
 			}
 		}
 	}
@@ -105,8 +101,8 @@ func axfr(address net.IP, port int, zone string, tsigOptions *TSigOptions) ([]Do
 
 	for _, domain := range domains {
 		for i, nameserver := range domain.Nameservers {
-			if glue, ok := glues[nameserver.Name]; ok {
-				nameserver.Glues = glue
+			if glue, ok := glues[nameserver.Hostname]; ok {
+				nameserver.IPv4 = glue
 				domain.Nameservers[i] = nameserver
 			}
 		}

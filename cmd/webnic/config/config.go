@@ -19,7 +19,7 @@ var WebNIC = struct {
 		Path      string
 		Languages []string
 	}
-	AssetsPath string `yaml: "assets path"`
+	AssetsPath string `yaml:"assets path"`
 	TSig       dnsmanager.TSigOptions
 	DNSManager dnsmanager.ServiceConfig `yaml:"dns manager"`
 }{}

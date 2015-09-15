@@ -16,7 +16,7 @@ import (
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/codegangsta/cli"
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/registrobr/trama"
 	"github.com/rafaeljusto/dnsmanager/cmd/webnic/config"
-	"github.com/rafaeljusto/dnsmanager/cmd/webnic/handler"
+	webhandler "github.com/rafaeljusto/dnsmanager/cmd/webnic/web/handler"
 )
 
 func main() {
@@ -83,7 +83,7 @@ func writePIDToFile() {
 }
 
 func initializeTrama() {
-	handler.Mux.Recover = func(r interface{}) {
+	webhandler.Mux.Recover = func(r interface{}) {
 		const size = 1 << 16
 		buf := make([]byte, size)
 		buf = buf[:runtime.Stack(buf, false)]
@@ -104,8 +104,8 @@ func initializeTrama() {
 		},
 	})
 
-	handler.Mux.GlobalTemplates = groupSet
-	if err := handler.Mux.ParseTemplates(); err != nil {
+	webhandler.Mux.GlobalTemplates = groupSet
+	if err := webhandler.Mux.ParseTemplates(); err != nil {
 		log.Fatalf("error loading templates: %s\n", err)
 	}
 }
@@ -124,8 +124,9 @@ func startServer() {
 
 	assetsPath := path.Join(config.WebNIC.Home, config.WebNIC.AssetsPath)
 
+	log.Println("OPLE1", config.WebNIC.AssetsPath)
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsPath))))
-	http.Handle("/", handler.Mux)
+	http.Handle("/", webhandler.Mux)
 
 	if err := http.Serve(ln, nil); err != nil {
 		log.Fatalf("error running server: %s", err)

@@ -64,13 +64,17 @@ func (s service) validate(domain Domain) error {
 	}
 
 	for i, ns := range domain.Nameservers {
-		ns.Name = strings.TrimSpace(ns.Name)
-		ns.Name = strings.ToLower(ns.Name)
-		ns.Name = strings.TrimRight(ns.Name, ".")
+		ns.Hostname = strings.TrimSpace(ns.Hostname)
+		ns.Hostname = strings.ToLower(ns.Hostname)
+		ns.Hostname = strings.TrimRight(ns.Hostname, ".")
 		domain.Nameservers[i] = ns
 
-		if !fqdnRX.MatchString(ns.Name) {
+		if !fqdnRX.MatchString(ns.Hostname) {
 			errBox.Append(NewDNSError(DNSErrorCodeInvalidFQDN, i, nil))
+		}
+
+		if ns.IPv4 != nil && ns.IPv4.To4() == nil {
+			errBox.Append(NewDNSError(DNSErrorCodeInvalidIPv4Glue, i, nil))
 		}
 	}
 

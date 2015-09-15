@@ -24,15 +24,11 @@ func nsupdate(domain Domain, dnsPort int) error {
 	fmt.Fprintf(cmdFile, "update delete %s NS\n", domain.FQDN)
 
 	for _, ns := range domain.Nameservers {
-		fmt.Fprintf(cmdFile, "update add %s 172800 NS %s\n", domain.FQDN, ns.Name)
-		fmt.Fprintf(cmdFile, "update delete %s A\n", ns.Name)
+		fmt.Fprintf(cmdFile, "update add %s 172800 NS %s\n", domain.FQDN, ns.Hostname)
+		fmt.Fprintf(cmdFile, "update delete %s A\n", ns.Hostname)
 
-		for _, glue := range ns.Glues {
-			if glue.To4() != nil {
-				fmt.Fprintf(cmdFile, "update add %s 172800 A %s\n", ns.Name, glue.String())
-			} else {
-				fmt.Fprintf(cmdFile, "update add %s 172800 AAAA %s\n", ns.Name, glue.String())
-			}
+		if ns.IPv4 != nil {
+			fmt.Fprintf(cmdFile, "update add %s 172800 A %s\n", ns.Hostname, ns.IPv4.String())
 		}
 	}
 

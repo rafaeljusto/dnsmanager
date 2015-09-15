@@ -1,0 +1,143 @@
+<link rel="import"
+      href="/assets/bower_components/polymer/polymer.html">
+
+<dom-module id="domain-element">
+
+  <template>
+    <style>
+      form {
+        background-color: #fff;
+        padding: 0.29em;
+      }
+
+      paper-button.red {
+        color: var(--paper-red-500);
+        --paper-button-flat-focus-color: var(--paper-red-50);
+      }
+
+      paper-button.red:hover {
+        background: var(--paper-red-50);
+      }
+
+      paper-button.green {
+        color: var(--paper-green-500);
+        --paper-button-flat-focus-color: var(--paper-green-50);
+      }
+
+      paper-button.green:hover {
+        background: var(--paper-green-50);
+      }
+
+      paper-button.blue {
+        color: var(--paper-light-blue-500);
+        --paper-button-flat-focus-color: var(--paper-light-blue-50);
+      }
+
+      paper-button.blue:hover {
+        background: var(--paper-light-blue-50);
+      }
+    </style>
+
+    <form>
+      <paper-input name="fqdn" ]
+                   label="FQDN"
+                   value="{{domain.fqdn}}"
+                   on-change="normalize"
+                   required
+                   auto-validate
+                   pattern="((([a-z0-9][a-z0-9\-]*[a-z0-9])|[a-z0-9]+)\.)*([a-z]+|xn\-\-[a-z0-9]+)\.?"></paper-input>
+
+      <br><br>
+
+      <template is="dom-repeat" items="{{domain.nameservers}}">
+        <fieldset>
+          <legend>Nameserver <span>{{plusplus(index)}}</span></legend>
+
+          <paper-input name="nameservers"
+                       label="Hostname"
+                       value="{{item.hostname}}"
+                       on-change="normalize"
+                       required
+                       auto-validate
+                       pattern="((([a-z0-9][a-z0-9\-]*[a-z0-9])|[a-z0-9]+)\.)*([a-z]+|xn\-\-[a-z0-9]+)\.?"></paper-input>
+
+          <template is="dom-if" if="{{item.needsGlue}}">
+            <paper-input name="nameservers"
+                         label="IPv4"
+                         value="{{item.ipv4}}"
+                         required
+                         auto-validate
+                         pattern="([0-9]{1,3}\.){3}[0-9]{1,3}"
+                         error-message="Invalid IPv4"></paper-input>
+          </template>
+
+          <br>
+          <paper-button raised on-click="removeNameserver" class="red">✖ Remove</paper-button>
+        </fieldset>
+      </template>
+
+      <br><br>
+
+      <paper-button raised on-click="addNameserver" class="blue">✚ Nameserver</paper-button>
+      <paper-button raised on-click="save" class="green">Save</paper-button>
+    </form>
+
+    <iron-ajax id="ajax" method="PUT" content-type="application/json"></iron-ajax>
+  </template>
+
+  <script>
+    Polymer({
+
+      is: "domain-element",
+
+      properties: {
+        domain: {
+          type: Object,
+          value: function() {
+            return {
+              fqdn: "",
+              nameservers: [],
+              dsset: []
+            };
+          }
+        }
+      },
+
+      normalize: function() {
+        this.set("domain.fqdn", this.domain.fqdn.replace(/\.+$/, ""));
+        for (var i in this.domain.nameservers) {
+          var ns = this.domain.nameservers[i];
+          var id = "domain.nameservers." + i;
+
+          this.set(id + ".hostname", ns.hostname.replace(/\.+$/, ""));
+          this.set(id + ".needsGlue", ns.hostname.endsWith(this.domain.fqdn));
+        }
+      },
+
+      addNameserver: function() {
+        this.push("domain.nameservers", {
+          hostname: "",
+          needsGlue: false,
+          ipv4: ""
+        });
+      },
+
+      removeNameserver: function(e) {
+        this.splice("domain.nameservers", e.model.index, 1);
+      },
+
+      save: function(e) {
+        var ajax = document.getElementById("ajax");
+        ajax.url = "/domain/" + this.domain.fqdn;
+        ajax.body = this.domain;
+        ajax.generateRequest();
+      },
+
+      plusplus: function(number) {
+        return number + 1
+      }
+
+    });
+  </script>
+
+</dom-module>

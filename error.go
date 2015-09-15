@@ -44,6 +44,9 @@ const (
 	// DNSErrorCodeInvalidFQDN is returned when a nameserver name has an
 	// invalid format
 	DNSErrorCodeInvalidFQDN
+
+	// DNSErrorCodeInvalidIPv4Glue is used when the informed IPv4 is invalid
+	DNSErrorCodeInvalidIPv4Glue
 )
 
 type DNSErrorCode int
