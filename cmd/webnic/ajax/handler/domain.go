@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	handle("/domain/{fqdn}", func() handy.Handler { return &domain{} })
+	Mux.Handle("/domain/{fqdn}", func() handy.Handler { return &domain{} })
 }
 
 type domain struct {

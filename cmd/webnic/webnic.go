@@ -15,6 +15,8 @@ import (
 
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/codegangsta/cli"
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/registrobr/trama"
+	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/trajber/handy"
+	ajaxhandler "github.com/rafaeljusto/dnsmanager/cmd/webnic/ajax/handler"
 	"github.com/rafaeljusto/dnsmanager/cmd/webnic/config"
 	webhandler "github.com/rafaeljusto/dnsmanager/cmd/webnic/web/handler"
 )
@@ -46,6 +48,7 @@ func main() {
 		redirectLogOutput()
 		writePIDToFile()
 		initializeTrama()
+		initializeHandy()
 		startServer()
 	}
 
@@ -110,6 +113,23 @@ func initializeTrama() {
 	}
 }
 
+func initializeHandy() {
+	ajaxhandler.Mux.Recover = func(r interface{}) {
+		const size = 1 << 16
+		buf := make([]byte, size)
+		buf = buf[:runtime.Stack(buf, false)]
+		log.Printf("Panic detected. Details: %v\n%s", r, buf)
+	}
+
+	handy.ErrorFunc = func(err error) {
+		log.Printf("handy error: %s\n", err)
+	}
+
+	handy.NoMatchFunc = func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+}
+
 func startServer() {
 	var host string
 	if config.WebNIC.Listen.Address != nil {
@@ -124,8 +144,9 @@ func startServer() {
 
 	assetsPath := path.Join(config.WebNIC.Home, config.WebNIC.AssetsPath)
 
-	log.Println("OPLE1", config.WebNIC.AssetsPath)
 	http.Handle("/assets/", http.StripPrefix("/assets/", http.FileServer(http.Dir(assetsPath))))
+	http.Handle("/domains", ajaxhandler.Mux)
+	http.Handle("/domain/", ajaxhandler.Mux)
 	http.Handle("/", webhandler.Mux)
 
 	if err := http.Serve(ln, nil); err != nil {
