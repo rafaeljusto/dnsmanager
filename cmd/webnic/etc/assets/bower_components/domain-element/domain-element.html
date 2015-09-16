@@ -1,5 +1,8 @@
-<link rel="import"
-      href="/assets/bower_components/polymer/polymer.html">
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-form/iron-form.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
 
 <dom-module id="domain-element">
 
@@ -39,13 +42,13 @@
     </style>
 
     <form>
-      <paper-input name="fqdn" ]
-                   label="FQDN"
+      <paper-input label="FQDN"
                    value="{{domain.fqdn}}"
                    on-change="normalize"
                    required
                    auto-validate
-                   pattern="((([a-z0-9][a-z0-9\-]*[a-z0-9])|[a-z0-9]+)\.)*([a-z]+|xn\-\-[a-z0-9]+)\.?"></paper-input>
+                   pattern="((([a-z0-9][a-z0-9\-]*[a-z0-9])|[a-z0-9]+)\.)*([a-z]+|xn\-\-[a-z0-9]+)\.?"
+                   error-message="Invalid FQDN"></paper-input>
 
       <br><br>
 
@@ -53,17 +56,16 @@
         <fieldset>
           <legend>Nameserver <span>{{plusplus(index)}}</span></legend>
 
-          <paper-input name="nameservers"
-                       label="Hostname"
+          <paper-input label="Hostname"
                        value="{{item.hostname}}"
                        on-change="normalize"
                        required
                        auto-validate
-                       pattern="((([a-z0-9][a-z0-9\-]*[a-z0-9])|[a-z0-9]+)\.)*([a-z]+|xn\-\-[a-z0-9]+)\.?"></paper-input>
+                       pattern="((([a-z0-9][a-z0-9\-]*[a-z0-9])|[a-z0-9]+)\.)*([a-z]+|xn\-\-[a-z0-9]+)\.?"
+                       error-message="Invalid hostname"></paper-input>
 
           <template is="dom-if" if="{{item.needsGlue}}">
-            <paper-input name="nameservers"
-                         label="IPv4"
+            <paper-input label="IPv4"
                          value="{{item.ipv4}}"
                          required
                          auto-validate
@@ -72,6 +74,7 @@
           </template>
 
           <br>
+
           <paper-button raised on-click="removeNameserver" class="red">✖ Remove</paper-button>
         </fieldset>
       </template>
@@ -79,6 +82,42 @@
       <br><br>
 
       <paper-button raised on-click="addNameserver" class="blue">✚ Nameserver</paper-button>
+
+      <br><br>
+
+      <template is="dom-repeat" items="{{domain.dsset}}">
+        <fieldset>
+          <legend>DS <span>{{plusplus(index)}}</span></legend>
+
+          <paper-input label="Keytag"
+                       value="{{item.keytag}}"
+                       required
+                       auto-validate
+                       pattern="[0-9]+"
+                       error-message="Invalid keytag"></paper-input>
+
+          <br>
+
+          <paper-dropdown-menu label="Algorithm">
+            <paper-menu class="dropdown-content" selected="{{item.algorithm}}">
+              <paper-item data-value="3">DSA/SHA-1</paper-item>
+              <paper-item data-value="5">RSA/SHA-1</paper-item>
+              <paper-item data-value="6">DSA/SHA-1 (NSEC3)</paper-item>
+              <paper-item data-value="7">RSA/SHA-1 (NSEC3)</paper-item>
+              <paper-item data-value="8">RSA/SHA-256 (NSEC3)</paper-item>
+              <paper-item data-value="10">RSA/SHA-512 (NSEC3)</paper-item>
+            </paper-menu>
+          </paper-dropdown-menu>
+
+          <br>
+
+          <paper-button raised on-click="removeDS" class="red">✖ Remove</paper-button>
+        </fieldset>
+      </template>
+
+      <br><br>
+
+      <paper-button raised on-click="addDS" class="blue">✚ DS</paper-button>
       <paper-button raised on-click="save" class="green">Save</paper-button>
     </form>
 
@@ -124,6 +163,19 @@
 
       removeNameserver: function(e) {
         this.splice("domain.nameservers", e.model.index, 1);
+      },
+
+      addDS: function() {
+        this.push("domain.dsset", {
+          keytag: 0,
+          algorithm: 5,
+          digestType: 1,
+          digest: ""
+        });
+      },
+
+      removeDS: function(e) {
+        this.splice("domain.dsset", e.model.index, 1);
       },
 
       save: function(e) {
