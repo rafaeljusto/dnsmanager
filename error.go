@@ -135,7 +135,7 @@ func (e ErrorBox) Unpack() error {
 func (e ErrorBox) Error() string {
 	var msg string
 	for i := range e.Errors {
-		msg += fmt.Sprintf("error %d: %v\n", e.Errors[i])
+		msg += fmt.Sprintf("error %d: %s\n", i, e.Errors[i])
 	}
 	return msg
 }
