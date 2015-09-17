@@ -13,6 +13,11 @@
         padding: 0.29em;
       }
 
+      paper-button {
+        margin-top: 0.50em;
+        margin-bottom: 0.50em;
+      }
+
       paper-button.red {
         color: var(--paper-red-500);
         --paper-button-flat-focus-color: var(--paper-red-50);
@@ -50,7 +55,7 @@
                    pattern="((([a-z0-9][a-z0-9\-]*[a-z0-9])|[a-z0-9]+)\.)*([a-z]+|xn\-\-[a-z0-9]+)\.?"
                    error-message="Invalid FQDN"></paper-input>
 
-      <br><br>
+      <br>
 
       <template is="dom-repeat" items="{{domain.nameservers}}">
         <fieldset>
@@ -79,11 +84,7 @@
         </fieldset>
       </template>
 
-      <br><br>
-
       <paper-button raised on-click="addNameserver" class="blue">✚ Nameserver</paper-button>
-
-      <br><br>
 
       <template is="dom-repeat" items="{{domain.dsset}}">
         <fieldset>
@@ -111,13 +112,32 @@
 
           <br>
 
+          <paper-dropdown-menu label="Digest Type">
+            <paper-menu class="dropdown-content" selected="{{item.digestType}}">
+              <paper-item data-value="1">SHA-1</paper-item>
+              <paper-item data-value="2">SHA-256</paper-item>
+            </paper-menu>
+          </paper-dropdown-menu>
+
+          <br>
+
+          <paper-input label="Digest"
+                       value="{{item.digest}}"
+                       required
+                       auto-validate
+                       pattern="[0-9a-fA-F ]+"
+                       error-message="Invalid digest"></paper-input>
+
+          <br>
+
           <paper-button raised on-click="removeDS" class="red">✖ Remove</paper-button>
         </fieldset>
       </template>
 
-      <br><br>
-
       <paper-button raised on-click="addDS" class="blue">✚ DS</paper-button>
+
+      <br>
+
       <paper-button raised on-click="save" class="green">Save</paper-button>
     </form>
 
@@ -145,6 +165,10 @@
       normalize: function() {
         this.set("domain.fqdn", this.domain.fqdn.replace(/\.+$/, ""));
         for (var i in this.domain.nameservers) {
+          if (i == "splices") {
+            continue
+          }
+
           var ns = this.domain.nameservers[i];
           var id = "domain.nameservers." + i;
 
