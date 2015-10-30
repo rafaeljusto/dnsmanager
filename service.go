@@ -41,7 +41,7 @@ type service struct {
 }
 
 func (s service) Save(domain Domain) error {
-	if err := s.validate(domain); err != nil {
+	if err := s.validate(&domain); err != nil {
 		return err
 	}
 
@@ -52,12 +52,13 @@ func (s service) Save(domain Domain) error {
 	return nsupdate(domain, s.config.DNSServer.Port)
 }
 
-func (s service) validate(domain Domain) error {
+func (s service) validate(domain *Domain) error {
 	var errBox ErrorBox
 
 	domain.FQDN = strings.TrimSpace(domain.FQDN)
 	domain.FQDN = strings.ToLower(domain.FQDN)
 	domain.FQDN = strings.TrimRight(domain.FQDN, ".")
+	domain.FQDN += "."
 
 	if !fqdnRX.MatchString(domain.FQDN) {
 		errBox.Append(NewGenericError(GenericErrorCodeInvalidFQDN))
@@ -67,6 +68,8 @@ func (s service) validate(domain Domain) error {
 		ns.Hostname = strings.TrimSpace(ns.Hostname)
 		ns.Hostname = strings.ToLower(ns.Hostname)
 		ns.Hostname = strings.TrimRight(ns.Hostname, ".")
+		ns.Hostname += "."
+
 		domain.Nameservers[i] = ns
 
 		if !fqdnRX.MatchString(ns.Hostname) {
