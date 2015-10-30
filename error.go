@@ -1,6 +1,9 @@
 package dnsmanager
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 const (
 	// GenericErrorCodeInvalidFQDN is returned when a domain name has an
@@ -25,6 +28,13 @@ func NewGenericError(code GenericErrorCode) GenericError {
 }
 
 func (g GenericError) Error() string {
+	switch g.Code {
+	case GenericErrorCodeInvalidFQDN:
+		return "dnsmanager: invalid FQDN"
+	case GenericErrorCodeBlockedTLD:
+		return "dnsmanager: blocked TLD"
+	}
+
 	return fmt.Sprintf("dnsmanager: generic error (%d)", g.Code)
 }
 
@@ -51,6 +61,23 @@ const (
 
 type DNSErrorCode int
 
+func (d DNSErrorCode) String() string {
+	switch d {
+	case DNSErrorMissingGlue:
+		return "missing glue record"
+	case DNSErrorCodeQueryFailed:
+		return "query failed"
+	case DNSErrorCodeNotAuthoritative:
+		return "not authoritative"
+	case DNSErrorCodeInvalidFQDN:
+		return "invalid FQDN"
+	case DNSErrorCodeInvalidIPv4Glue:
+		return "invalid IPV4 glue record"
+	}
+
+	return strconv.Itoa(int(d))
+}
+
 type DNSError struct {
 	Code    DNSErrorCode
 	Index   int
@@ -66,7 +93,7 @@ func NewDNSError(code DNSErrorCode, index int, err error) DNSError {
 }
 
 func (d DNSError) Error() string {
-	msg := fmt.Sprintf("dnsmanager: dns check error (%d) in nameserver index %d",
+	msg := fmt.Sprintf("dnsmanager: dns check error (%s) in nameserver index %d",
 		d.Code, d.Index)
 
 	if d.Details != nil {
@@ -96,6 +123,21 @@ const (
 
 type DNSSECErrorCode int
 
+func (d DNSSECErrorCode) String() string {
+	switch d {
+	case DNSSECErrorCodeAlgorithmDontMatch:
+		return "algorithm don't match"
+	case DNSSECErrorCodeDigestDontMatch:
+		return "digest don't match"
+	case DNSSECErrorCodeDNSKEYNotSEP:
+		return "DNSKEY is not SEP"
+	case DNSSECErrorCodeDSNotFound:
+		return "DS not found"
+	}
+
+	return strconv.Itoa(int(d))
+}
+
 type DNSSECError struct {
 	Code    DNSSECErrorCode
 	NSIndex int
@@ -111,7 +153,7 @@ func NewDNSSECError(code DNSSECErrorCode, nsIndex, dsIndex int) DNSSECError {
 }
 
 func (d DNSSECError) Error() string {
-	return fmt.Sprintf("dnsmanager: dnssec check error (%d) in nameserver index %d and ds index %d",
+	return fmt.Sprintf("dnsmanager: dnssec check error (%s) in nameserver index %d and ds index %d",
 		d.Code, d.NSIndex, d.DSIndex)
 }
 
