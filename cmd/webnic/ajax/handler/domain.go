@@ -18,13 +18,8 @@ type domain struct {
 	handy.DefaultHandler
 	interceptor.IntrospectorCompliant
 
-	FQDN    string            `urivar:"fqdn"`
-	Domain  dnsmanager.Domain `request:"put"`
-	uriVars handy.URIVars
-}
-
-func (d *domain) URIVars() handy.URIVars {
-	return d.uriVars
+	FQDN   string            `urivar:"fqdn"`
+	Domain dnsmanager.Domain `request:"put"`
 }
 
 func (d *domain) Put() int {
@@ -41,6 +36,7 @@ func (d *domain) Put() int {
 
 func (d *domain) Interceptors() handy.InterceptorChain {
 	return handy.NewInterceptorChain().
+		Chain(interceptor.NewIntrospector(d)).
 		Chain(interceptor.NewURIVars(d)).
 		Chain(interceptor.NewJSONCodec(d))
 }
