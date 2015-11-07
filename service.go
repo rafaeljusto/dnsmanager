@@ -25,7 +25,7 @@ type ServiceConfig struct {
 }
 
 type Service interface {
-	Save(Domain) error
+	Save(Domain, *TSigOptions) error
 	Retrieve(*TSigOptions) ([]Domain, error)
 }
 
@@ -40,7 +40,7 @@ type service struct {
 	config ServiceConfig
 }
 
-func (s service) Save(domain Domain) error {
+func (s service) Save(domain Domain, tsig *TSigOptions) error {
 	if err := s.validate(&domain); err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func (s service) Save(domain Domain) error {
 		return err
 	}
 
-	return nsupdate(domain, s.config.DNSServer.Port)
+	return nsupdate(domain, s.config.DNSServer.Port, tsig)
 }
 
 func (s service) validate(domain *Domain) error {

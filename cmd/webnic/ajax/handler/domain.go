@@ -26,7 +26,7 @@ func (d *domain) Put() int {
 	d.Domain.FQDN = d.FQDN
 
 	service := dnsmanager.NewService(config.WebNIC.DNSManager)
-	if err := service.Save(d.Domain); err != nil {
+	if err := service.Save(d.Domain, &config.WebNIC.TSig); err != nil {
 		log.Println("error saving domain:", err)
 		return http.StatusInternalServerError
 	}
