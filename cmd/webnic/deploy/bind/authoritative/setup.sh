@@ -13,14 +13,15 @@ mkdir -p /etc/bind/zones
 cp db.root /etc/bind/zones
 
 mkdir -p /etc/bind/keys
-cd /etc/bind/keys
-dnssec-keygen -3 -f KSK -r /dev/urandom .
-
-cd /etc/bind/zones
-dnssec-signzone -S -o . -3 abc123 -K /etc/bind/keys -z db.root
+dnssec-keygen -3 -f KSK -K /etc/bind/keys -r /dev/urandom .
+dnssec-keygen -3 -K /etc/bind/keys -r /dev/urandom .
 
 chown -R root:bind /etc/bind
 chmod -R g+w /etc/bind/zones
 chmod -R g+r /etc/bind/keys
 
+# Give write permissions to /etc/bind
+vi /etc/apparmor.d/usr.sbin.named
+
+service apparmor restart
 service bind9 restart

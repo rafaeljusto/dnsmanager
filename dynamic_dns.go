@@ -7,13 +7,9 @@ import (
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/miekg/dns"
 )
 
-const (
-	nsupdateCmd = "nsupdate"
-)
-
 func nsupdate(domain Domain, dnsPort int, tsigOptions *TSigOptions) error {
 	var m dns.Msg
-	m.SetUpdate(domain.FQDN)
+	m.SetUpdate(".")
 	m.RemoveRRset([]dns.RR{
 		&dns.NS{
 			Hdr: dns.RR_Header{

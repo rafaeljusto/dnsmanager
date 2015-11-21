@@ -1,4 +1,4 @@
-home: "/usr/local/webnic/"
+home: "."
 log: "webnic.log"
 
 listen:
