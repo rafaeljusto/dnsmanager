@@ -60,13 +60,16 @@ func nsupdate(domain Domain, dnsPort int, tsigOptions *TSigOptions) error {
 	}
 
 	m.Insert(newRRs)
-	m.SetTsig(tsigOptions.Name, tsigOptions.Algorithm, 300, time.Now().Unix())
 
 	var client dns.Client
-	client.TsigSecret = map[string]string{
-		tsigOptions.Name: tsigOptions.Secret,
+
+	if tsigOptions != nil {
+		m.SetTsig(tsigOptions.Name, tsigOptions.Algorithm, 300, time.Now().Unix())
+		client.TsigSecret = map[string]string{
+			tsigOptions.Name: tsigOptions.Secret,
+		}
 	}
 
-	_, _, err := client.Exchange(&m, "localhost:53")
+	_, _, err := client.Exchange(&m, fmt.Sprintf("localhost:%d", dnsPort))
 	return err
 }
