@@ -1,0 +1,30 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-list/iron-list.html">
+
+<dom-module id="domains-element">
+
+  <style>
+    .domains {
+      background-color: #fff;
+      padding: 0.29em;
+    }
+  </style>
+
+  <template>
+    <div class="domains">
+      <iron-ajax url="/domains" last-response="{{domains}}" auto></iron-ajax>
+      <iron-list items="[[domains]]" as="domain">
+        <template>
+          <div><a href="/domain/[[domain.fqdn]]">[[domain.fqdn]]</a></div>
+        </template>
+      </iron-list>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: "domains-element",
+    });
+  </script>
+
+</dom-module>

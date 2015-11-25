@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	Mux.Handle("/domains", func() handy.Handler { return &domain{} })
+	Mux.Handle("/domains", func() handy.Handler { return &domains{} })
 }
 
 type domains struct {
@@ -37,5 +37,6 @@ func (d *domains) Get() int {
 
 func (d *domains) Interceptors() handy.InterceptorChain {
 	return handy.NewInterceptorChain().
+		Chain(interceptor.NewIntrospector(d)).
 		Chain(interceptor.NewJSONCodec(d))
 }
