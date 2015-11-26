@@ -22,6 +22,8 @@
     "polymer": "Polymer/polymer#^1.0.0",
     "paper-menu": "PolymerElements/paper-menu#~1.2.0",
     "paper-item": "PolymerElements/paper-item#~1.1.1",
-    "iron-list": "PolymerElements/iron-list#~1.1.6"
+    "iron-list": "PolymerElements/iron-list#~1.1.6",
+    "paper-tabs": "PolymerElements/paper-tabs#~1.1.0",
+    "iron-pages": "PolymerElements/iron-pages#~1.0.4"
   }
 }

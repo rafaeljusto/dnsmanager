@@ -1,21 +1,48 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-list/iron-list.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="domains-element">
 
   <style>
     .domains {
       background-color: #fff;
-      padding: 0.29em;
     }
+
+    iron-list {
+      padding-bottom: 16px;
+    }
+
+    .item {
+      @apply(--layout-horizontal);
+      background-color: #eee;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 16px 16px 0 16px;
+      padding: 20px;
+    }
+
+    .item:hover {
+      outline: 0;
+      background-color: #acb3bf;
+    }
+
+    .item:active {
+      transform: scale(.95);
+    }
+
   </style>
 
   <template>
+    <iron-ajax url="/domains" last-response="{{domains}}" auto></iron-ajax>
+
     <div class="domains">
-      <iron-ajax url="/domains" last-response="{{domains}}" auto></iron-ajax>
       <iron-list items="[[domains]]" as="domain">
         <template>
-          <div><a href="/domain/[[domain.fqdn]]">[[domain.fqdn]]</a></div>
+          <div>
+            <div class="item" on-click="select">[[domain.fqdn]]</div>
+          </div>
         </template>
       </iron-list>
     </div>
@@ -24,6 +51,23 @@
   <script>
     Polymer({
       is: "domains-element",
+
+      properties: {
+        selected: {
+          type: Object,
+          value: function() {
+            return {
+              fqdn: "",
+              nameservers: [],
+              dsset: []
+            };
+          }
+        }
+      },
+
+      select: function(e) {
+        this.set("selected", e.model.__data__.domain);
+      }
     });
   </script>
 

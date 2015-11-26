@@ -42,14 +42,42 @@
     </style>
 
     <script src="/assets/bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="/assets/bower_components/paper-tabs/paper-tabs.html">
+    <link rel="import" href="/assets/bower_components/iron-pages/iron-pages.html">
     <link rel="import" href="/assets/bower_components/domains-element/domains-element.html">
     <link rel="import" href="/assets/bower_components/domain-element/domain-element.html">
 	</head>
 	<body>
     <div class="content">
       <div class="header">DNSSEC Laboratory</div>
-		  <domains-element></domains-element>
-		  <domain-element></domain-element>
+
+      <template is="dom-bind">
+        <paper-tabs selected="{{"{{"}}selected{{"}}"}}">
+          <paper-tab>Registered Domains</paper-tab>
+          <paper-tab>New Domain</paper-tab>
+        </paper-tabs>
+
+        <iron-pages selected="{{"{{"}}selected{{"}}"}}">
+          <div>
+            <domains-element selected="{{"{{"}}domain{{"}}"}}"></domains-element>
+          </div>
+          <div>
+            <domain-element domain="{{"{{"}}domain{{"}}"}}"></domain-element>
+          </div>
+        </iron-pages>
+      </template>
     </div>
+
+    <script>
+      document.addEventListener("WebComponentsReady", function () {
+        var template = document.querySelector("template[is='dom-bind']");
+        template.selected = 0;
+        template.domain = {
+          fqdn: "",
+          nameservers: [],
+          dsset: []
+        };
+      });
+    </script>
 	</body>
 </html>
