@@ -1,12 +1,13 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../iron-list/iron-list.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../paper-styles/color.html">
 
 <dom-module id="domains-element">
 
   <style>
     .domains {
-      background-color: #fff;
+      background-color: var(--google-grey-100, #f5f5f5);
     }
 
     iron-list {
@@ -15,8 +16,8 @@
 
     .item {
       @apply(--layout-horizontal);
-      background-color: #eee;
-      border: 1px solid #ddd;
+      background-color: var(--google-yellow-50, #fffde7);
+      border: 1px solid var(--google-grey-300, #e0e0e0);
       border-radius: 8px;
       cursor: pointer;
       margin: 16px 16px 0 16px;
@@ -25,7 +26,7 @@
 
     .item:hover {
       outline: 0;
-      background-color: #acb3bf;
+      background-color: var(--google-yellow-200, #fff59d);
     }
 
     .item:active {

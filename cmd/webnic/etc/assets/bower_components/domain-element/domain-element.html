@@ -5,13 +5,14 @@
 <link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../paper-menu/paper-menu.html">
 <link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-styles/color.html">
 
 <dom-module id="domain-element">
 
   <template>
     <style>
       form {
-        background-color: #fff;
+        background-color: var(--google-grey-100, #eee);
         padding: 0.29em;
       }
 
@@ -21,30 +22,30 @@
       }
 
       paper-button.red {
-        color: var(--paper-red-500);
-        --paper-button-flat-focus-color: var(--paper-red-50);
+        color: var(--google-red-500, #db4437);
+        --paper-button-flat-focus-color: var(--google-red-100, #f4c7c3);
       }
 
       paper-button.red:hover {
-        background: var(--paper-red-50);
+        background: var(--google-red-100, #f4c7c3);
       }
 
       paper-button.green {
-        color: var(--paper-green-500);
-        --paper-button-flat-focus-color: var(--paper-green-50);
+        color: var(--google-green-500, #0f9d58);
+        --paper-button-flat-focus-color: var(--google-green-100, #b7e1cd);
       }
 
       paper-button.green:hover {
-        background: var(--paper-green-50);
+        background: var(--google-green-100, #b7e1cd);
       }
 
       paper-button.blue {
-        color: var(--paper-light-blue-500);
-        --paper-button-flat-focus-color: var(--paper-light-blue-50);
+        color: var(--paper-light-blue-500, #03a9f4);
+        --paper-button-flat-focus-color: var(--google-light-blue-50, #e1f5fe);
       }
 
       paper-button.blue:hover {
-        background: var(--paper-light-blue-50);
+        background: var(--google-light-blue-50, #e1f5fe);
       }
     </style>
 
