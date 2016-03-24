@@ -104,20 +104,23 @@ func (d DNSError) Error() string {
 }
 
 const (
+	// DNSSECErrorCodeInvalidDNSKEY failed to convert the DNSKEY into a DS.
+	DNSSECErrorCodeInvalidDNSKEY DNSSECErrorCode = iota
+
 	// DNSSECErrorCodeAlgorithmDontMatch the algorithm used in the DS doesn't
-	// match with what we found in the DNSKEY response
-	DNSSECErrorCodeAlgorithmDontMatch DNSSECErrorCode = iota
+	// match with what we found in the DNSKEY response.
+	DNSSECErrorCodeAlgorithmDontMatch
 
 	// DNSSECErrorCodeDigestDontMatch the digest doesn't match from what we
-	// calculate from the DNSKEY response
+	// calculate from the DNSKEY response.
 	DNSSECErrorCodeDigestDontMatch
 
 	// DNSSECErrorCodeDNSKEYNotSEP the public key used as DS is not a secure
-	// entry point of the zone
+	// entry point of the zone.
 	DNSSECErrorCodeDNSKEYNotSEP
 
 	// DNSSECErrorCodeDSNotFound the DS did not match with any DNSKEY keytag
-	// of the keyset
+	// of the keyset.
 	DNSSECErrorCodeDSNotFound
 )
 
@@ -125,6 +128,8 @@ type DNSSECErrorCode int
 
 func (d DNSSECErrorCode) String() string {
 	switch d {
+	case DNSSECErrorCodeInvalidDNSKEY:
+		return "failed to convert DNSKEY to DS"
 	case DNSSECErrorCodeAlgorithmDontMatch:
 		return "algorithm don't match"
 	case DNSSECErrorCodeDigestDontMatch:

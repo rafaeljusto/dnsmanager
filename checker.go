@@ -59,6 +59,11 @@ func checkDSSet(dsSet []DS, ns Nameserver, fqdn string, nsIndex int, dnsCheckPor
 			keytagMatch[ds.KeyTag] = true
 			dsFromResponse := dnskeyRR.ToDS(ds.DigestType)
 
+			if dsFromResponse == nil {
+				errBox.Append(NewDNSSECError(DNSSECErrorCodeInvalidDNSKEY, nsIndex, dsIndex))
+				continue
+			}
+
 			if dsFromResponse.Algorithm != ds.Algorithm {
 				errBox.Append(NewDNSSECError(DNSSECErrorCodeAlgorithmDontMatch, nsIndex, dsIndex))
 			} else if strings.ToUpper(dsFromResponse.Digest) != ds.Digest {

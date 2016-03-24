@@ -8,6 +8,7 @@ import (
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/trajber/handy"
 	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/trajber/handy/interceptor"
 	"github.com/rafaeljusto/dnsmanager/cmd/webnic/config"
+	"github.com/rafaeljusto/dnsmanager/cmd/webnic/protocol"
 )
 
 func init() {
@@ -18,15 +19,21 @@ type domain struct {
 	handy.DefaultHandler
 	interceptor.IntrospectorCompliant
 
-	FQDN   string            `urivar:"fqdn"`
-	Domain dnsmanager.Domain `request:"put"`
+	FQDN   string          `urivar:"fqdn"`
+	Domain protocol.Domain `request:"put"`
 }
 
 func (d *domain) Put() int {
 	d.Domain.FQDN = d.FQDN
 
+	domain, err := d.Domain.Convert()
+	if err != nil {
+		// TODO: BadRequest body
+		return http.StatusBadRequest
+	}
+
 	service := dnsmanager.NewService(config.WebNIC.DNSManager)
-	if err := service.Save(d.Domain, &config.WebNIC.TSig); err != nil {
+	if err := service.Save(domain, &config.WebNIC.TSig); err != nil {
 		log.Println("error saving domain:", err)
 		return http.StatusInternalServerError
 	}
