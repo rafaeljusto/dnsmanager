@@ -103,22 +103,22 @@
           <br>
 
           <paper-dropdown-menu label="Algorithm">
-            <paper-menu class="dropdown-content" selected="{{item.algorithm}}">
-              <paper-item data-value="3">DSA/SHA-1</paper-item>
-              <paper-item data-value="5">RSA/SHA-1</paper-item>
-              <paper-item data-value="6">DSA/SHA-1 (NSEC3)</paper-item>
-              <paper-item data-value="7">RSA/SHA-1 (NSEC3)</paper-item>
-              <paper-item data-value="8">RSA/SHA-256 (NSEC3)</paper-item>
-              <paper-item data-value="10">RSA/SHA-512 (NSEC3)</paper-item>
+            <paper-menu class="dropdown-content" selected="{{item.algorithm}}" attr-for-selected="value">
+              <paper-item value="3">DSA/SHA-1</paper-item>
+              <paper-item value="5">RSA/SHA-1</paper-item>
+              <paper-item value="6">DSA/SHA-1 (NSEC3)</paper-item>
+              <paper-item value="7">RSA/SHA-1 (NSEC3)</paper-item>
+              <paper-item value="8">RSA/SHA-256 (NSEC3)</paper-item>
+              <paper-item value="10">RSA/SHA-512 (NSEC3)</paper-item>
             </paper-menu>
           </paper-dropdown-menu>
 
           <br>
 
           <paper-dropdown-menu label="Digest Type">
-            <paper-menu class="dropdown-content" selected="{{item.digestType}}">
-              <paper-item data-value="1">SHA-1</paper-item>
-              <paper-item data-value="2">SHA-256</paper-item>
+            <paper-menu class="dropdown-content" selected="{{item.digestType}}" attr-for-selected="value">
+              <paper-item value="1">SHA-1</paper-item>
+              <paper-item value="2">SHA-256</paper-item>
             </paper-menu>
           </paper-dropdown-menu>
 
