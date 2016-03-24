@@ -5,7 +5,7 @@ import (
 	"net"
 
 	"github.com/rafaeljusto/dnsmanager"
-	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v2"
 )
 
 var WebNIC = struct {

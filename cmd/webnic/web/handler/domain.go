@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"path"
 
-	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/registrobr/trama"
 	"github.com/rafaeljusto/dnsmanager/cmd/webnic/config"
 	"github.com/rafaeljusto/dnsmanager/cmd/webnic/web/interceptor"
+	"github.com/registrobr/trama"
 )
 
 func init() {

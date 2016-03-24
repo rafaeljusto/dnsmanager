@@ -1,22 +1,19 @@
 {
 	"ImportPath": "github.com/rafaeljusto/dnsmanager",
-	"GoVersion": "go1.5.1",
+	"GoVersion": "go1.6",
+	"GodepVersion": "v60",
 	"Packages": [
 		"./..."
 	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/codegangsta/cli",
-			"Comment": "1.2.0-95-g9b2bd2b",
-			"Rev": "9b2bd2b3489748d4d0a204fa4eb2ee9e89e0ebc6"
-		},
-		{
-			"ImportPath": "github.com/gorilla/schema",
-			"Rev": "83d18c92c931a85a1393e7294a74dec23086f89c"
+			"Comment": "1.2.0-143-ga65b733",
+			"Rev": "a65b733b303f0055f8d324d805f393cd3e7a7904"
 		},
 		{
 			"ImportPath": "github.com/miekg/dns",
-			"Rev": "1897a2a983df410a57ff88f8bfe647164b49e373"
+			"Rev": "f520760857195d2fd32def6f108270857522500a"
 		},
 		{
 			"ImportPath": "github.com/registrobr/trama",
@@ -27,8 +24,12 @@
 			"Rev": "03a6eb3455688ed83bd2b843c179126bb04fc191"
 		},
 		{
+			"ImportPath": "github.com/trajber/handy/interceptor",
+			"Rev": "03a6eb3455688ed83bd2b843c179126bb04fc191"
+		},
+		{
 			"ImportPath": "gopkg.in/yaml.v2",
-			"Rev": "49c95bdc21843256fb6c4e0d370a05f24a0bf213"
+			"Rev": "53feefa2559fb8dfa8d81baad31be332c97d6c77"
 		}
 	]
 }

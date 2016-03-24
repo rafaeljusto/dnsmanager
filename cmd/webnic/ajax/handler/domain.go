@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/rafaeljusto/dnsmanager"
-	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/trajber/handy"
-	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/trajber/handy/interceptor"
 	"github.com/rafaeljusto/dnsmanager/cmd/webnic/config"
 	"github.com/rafaeljusto/dnsmanager/cmd/webnic/protocol"
+	"github.com/trajber/handy"
+	"github.com/trajber/handy/interceptor"
 )
 
 func init() {

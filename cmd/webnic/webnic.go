@@ -13,12 +13,12 @@ import (
 	"runtime"
 	"strconv"
 
-	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/codegangsta/cli"
-	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/registrobr/trama"
-	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/trajber/handy"
+	"github.com/codegangsta/cli"
 	ajaxhandler "github.com/rafaeljusto/dnsmanager/cmd/webnic/ajax/handler"
 	"github.com/rafaeljusto/dnsmanager/cmd/webnic/config"
 	webhandler "github.com/rafaeljusto/dnsmanager/cmd/webnic/web/handler"
+	"github.com/registrobr/trama"
+	"github.com/trajber/handy"
 )
 
 func main() {

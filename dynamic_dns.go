@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/miekg/dns"
+	"github.com/miekg/dns"
 )
 
 func nsupdate(domain Domain, dnsPort int, tsigOptions *TSigOptions) error {

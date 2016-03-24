@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/rafaeljusto/dnsmanager/Godeps/_workspace/src/github.com/miekg/dns"
+	"github.com/miekg/dns"
 )
 
 func checkDelegation(domain Domain, dnsCheckPort int) error {
