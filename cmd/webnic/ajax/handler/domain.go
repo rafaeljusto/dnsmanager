@@ -34,7 +34,7 @@ func (d *domain) Put() int {
 
 	service := dnsmanager.NewService(config.WebNIC.DNSManager)
 	if err := service.Save(domain, &config.WebNIC.TSig); err != nil {
-		log.Println("error saving domain:", err)
+		log.Print("error saving domain:", err)
 		return http.StatusInternalServerError
 	}
 

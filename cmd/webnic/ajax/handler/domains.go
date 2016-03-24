@@ -27,7 +27,7 @@ func (d *domains) Get() int {
 	domains, err := service.Retrieve(&config.WebNIC.TSig)
 
 	if err != nil {
-		log.Println("error retrieving domains:", err)
+		log.Print("error retrieving domains:", err)
 		return http.StatusInternalServerError
 	}
 
